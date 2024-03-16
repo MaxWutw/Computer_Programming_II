@@ -1,0 +1,58 @@
+#include "mystring.h"
+
+char *mystrchr(const char *s, int c){
+    if(!s) return NULL;
+    while(*s != 0){
+        if(*s == c) return (char *)s;
+        s++;
+    }
+    return NULL;
+}
+char *mystrrchr(const char *s, int c){
+    if(!s) return NULL;
+    int32_t leng = 0;
+    const char *s_tmp = s;
+    while(*s_tmp != 0){
+        leng++;
+        s_tmp++;
+    }
+    for(const char *it = s + leng;it != s;it--){
+        if(*it != c) continue;
+    }
+    return NULL;
+}
+size_t mystrspn(const char *s, const char *accept){
+    int32_t leng = 0;
+    int8_t judge = 0;
+    if(!s || !accept) return 0;
+    for(const char *it = s;*it != 0;it++){
+        for(const char *iter = accept;*iter != 0;iter++){
+            if(*it == *iter){
+                judge = 1;
+                leng++;
+            }
+        }
+        if(!judge) break;
+        judge = 0;
+    }
+    return leng;
+}
+size_t mystrcspn(const char *s, const char *reject){
+    if(!s || !reject) return 0;
+    int32_t leng = 0;
+    for(const char *it = s;*it != 0;it++, leng++){
+        for(const char *iter = reject;*iter != 0;iter++){
+            if(*it == *iter) return leng;
+        }
+    }
+    return leng;
+}
+char *mystrpbrk(const char *s, const char *accept){
+
+}
+// char *mystrstr(const char *haystack, const char *needle){
+
+// }
+// char *mystrtok(char *str, const char *delim){
+
+// }
