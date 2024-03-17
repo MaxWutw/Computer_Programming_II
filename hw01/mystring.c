@@ -48,11 +48,41 @@ size_t mystrcspn(const char *s, const char *reject){
     return leng;
 }
 char *mystrpbrk(const char *s, const char *accept){
-
+    if(!s || !accept) return NULL;
+    for(const char *it = s;*it != 0;it++){
+        for(const char *iter = accept;*iter != 0;iter++){
+            if(*it == *iter) return (char *)it;
+        }
+    }
+    return NULL;
 }
-// char *mystrstr(const char *haystack, const char *needle){
-
-// }
-// char *mystrtok(char *str, const char *delim){
-
-// }
+char *mystrstr(const char *haystack, const char *needle){
+    if(!haystack || !needle) return NULL;
+    int8_t judge = 1;
+    const char *iter = needle;
+    const char *start = NULL;
+    for(const char *it = haystack;*it != 0;it++){
+        if(*iter == 0) return (char *)start;
+        if(*iter == *it && !start) start = it;
+        if(*iter == *it) iter++;
+        else if(*iter != *it){
+            iter = needle;
+            start = NULL;
+        }
+    }
+    return NULL;
+}
+char *mystrtok(char *str, const char *delim){
+    static char* idx = NULL;
+    if(str == NULL){
+        str = idx;
+        if(str == NULL) return NULL;
+    }
+    char *tmp = mystrpbrk(str, delim);
+    if(tmp){
+        *tmp = 0;
+        idx = tmp + 1;
+    }
+    else idx = NULL;
+    return str;
+}

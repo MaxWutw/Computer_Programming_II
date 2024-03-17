@@ -3,10 +3,25 @@
 #include <string.h>
 #include "mystring.h"
 int main(){
-    const char *str1 = "abcdefg book";
-    const char *str2 = "cbe";
-    int siz = mystrcspn(str1, str2);
-    printf("%d\n", siz);
+    // const char *str1 = "This is a c-style string";
+    // const char *str2 = "c-style";
+    // int siz = mystrpbrk(str1, str2);
+    // printf("%d\n", siz);
+    // char *str = mystrstr(str1, str2);
+    // printf("%s\n", str);
+    char str[] = "Hello world, nice to meet you";
+    const char* d = "  ,";
+    char *p;
+    p = mystrtok(str, d);
+    // char *str1 = "hello";
+    // char *str2 = str1;
+    // str2 = ";";
+    // printf("%s\n", str1);
+    // printf("%s\n", p);
+    while (p != NULL) {
+        printf("%s\n", p);
+        p = mystrtok(NULL, d);		   
+    }
 
     return 0;
 }
