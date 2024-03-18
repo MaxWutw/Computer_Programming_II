@@ -2,8 +2,8 @@
 
 int32_t calculate(char *pEpr, int32_t base, char **ppResult){
     int32_t sum = 0;
-    if(pEpr[0] == '+' || pEpr[0] == '-' || pEpr[0] == '*') return 0;
-    if(!pEpr) return 0;
+    if(pEpr[0] == '+' || pEpr[0] == '-' || pEpr[0] == '*') return -1;
+    if(!pEpr) return -1;
     char *it = pEpr;
     int32_t stack[200], idx = 0;
     for(int32_t i = 0;i < 200;i++) stack[i] = 0;
@@ -53,7 +53,7 @@ int32_t calculate(char *pEpr, int32_t base, char **ppResult){
     *ppResult = answer;
     printf("%s\n", *ppResult);
 
-    return 1;
+    return 0;
 }
 
 int32_t convert2base10(char *data){
