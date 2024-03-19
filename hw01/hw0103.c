@@ -5,13 +5,37 @@ int main(){
     // uint32_t size;
     // uint32_t pPowers[] = {};
     // int32_t *pCoefficients;
-    sPoly pResult, pFy, pFx;
-    pFy.size = 1;
-    pFy.pPowers = malloc(sizeof(int) * 1);
-    pFy.pCoefficients = malloc(sizeof(int) * 1);
-    pFy.pPowers[0] = 2;
-    pFy.pCoefficients[0] = 1;
+    // sPoly pResult, pFy, pFx;
+    // pFy.size = 1;
+    // pFy.pPowers = malloc(sizeof(int) * 1);
+    // pFy.pCoefficients = malloc(sizeof(int) * 1);
+    // pFy.pPowers[0] = 2;
+    // pFy.pCoefficients[0] = 1;
 
+    // pFx.pPowers = malloc(sizeof(int) * 2);
+    // pFx.pCoefficients = malloc(sizeof(int) * 2);
+    // pFx.pPowers[0] = 1;
+    // pFx.pPowers[1] = 0;
+    // pFx.pCoefficients[0] = 32;
+    // pFx.pCoefficients[1] = -24;
+
+
+    sPoly pResult, pFy, pFx;
+    pFy.size = 4;
+    pFy.pPowers = malloc(sizeof(int) * 4);
+    pFy.pCoefficients = malloc(sizeof(int) * 4);
+    pFy.pPowers[0] = 1;
+    pFy.pCoefficients[0] = 1;
+    pFy.pPowers[1] = 2;
+    pFy.pCoefficients[0] = 6;
+    pFy.pPowers[2] = 3;
+    pFy.pCoefficients[0] = 4;
+    pFy.pPowers[3] = 1;
+    pFy.pCoefficients[0] = 2;
+    pFy.pPowers[0] = 2;
+    pFy.pCoefficients[0] = 5;
+
+    pFx.size = 2;
     pFx.pPowers = malloc(sizeof(int) * 2);
     pFx.pCoefficients = malloc(sizeof(int) * 2);
     pFx.pPowers[0] = 1;
