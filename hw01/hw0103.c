@@ -21,27 +21,24 @@ int main(){
 
 
     sPoly pResult, pFy, pFx;
-    pFy.size = 4;
-    pFy.pPowers = malloc(sizeof(int) * 4);
-    pFy.pCoefficients = malloc(sizeof(int) * 4);
-    pFy.pPowers[0] = 1;
+    pFy.size = 2;
+    pFy.pPowers = malloc(sizeof(int) * 2);
+    pFy.pCoefficients = malloc(sizeof(int) * 2);
+    pFy.pPowers[0] = 3;
     pFy.pCoefficients[0] = 1;
     pFy.pPowers[1] = 2;
-    pFy.pCoefficients[0] = 6;
-    pFy.pPowers[2] = 3;
-    pFy.pCoefficients[0] = 4;
-    pFy.pPowers[3] = 1;
-    pFy.pCoefficients[0] = 2;
-    pFy.pPowers[0] = 2;
-    pFy.pCoefficients[0] = 5;
+    pFy.pCoefficients[0] = 1;
+    
 
-    pFx.size = 2;
-    pFx.pPowers = malloc(sizeof(int) * 2);
-    pFx.pCoefficients = malloc(sizeof(int) * 2);
-    pFx.pPowers[0] = 1;
-    pFx.pPowers[1] = 0;
-    pFx.pCoefficients[0] = 32;
-    pFx.pCoefficients[1] = -24;
+    pFx.size = 3;
+    pFx.pPowers = malloc(sizeof(int) * 3);
+    pFx.pCoefficients = malloc(sizeof(int) * 3);
+    pFx.pPowers[0] = 2;
+    pFx.pPowers[1] = 1;
+    pFx.pPowers[2] = 0;
+    pFx.pCoefficients[0] = 4;
+    pFx.pCoefficients[1] = 3;
+    pFx.pCoefficients[2] = -1;
 
     chain_rule(&pResult, &pFy, &pFx);
 
