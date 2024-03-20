@@ -5,8 +5,8 @@ all:
 	-gcc hw0101.o mystring.o -o hw0101
 	-gcc -g -c hw0102.c mycal.c
 	-gcc hw0102.o mycal.o -o  hw0102
-	-gcc -g -c hw0103.c mychain.c
-	-gcc hw0103.o mychain.o -o hw0103
+	-gcc -g -fsanitize=address -c hw0103.c mychain.c
+	-gcc -fsanitize=address hw0103.o mychain.o -o hw0103
 	# -gcc hw0104.c -o hw0104
 	# -gcc hw0105.c -o hw0105
 
