@@ -12,6 +12,6 @@ typedef struct _sPoly{
 int32_t chain_rule ( sPoly *pResult , const sPoly *pFy , const sPoly *pFx );
 void sort(sPoly *data, int32_t size);
 void unique(sPoly *src, sPoly *des);
-void cal_times(sPoly *src, int32_t times, int32_t base, sPoly *chain);
+void cal_times(sPoly *src, int32_t times, int32_t base, sPoly *chain, sPoly *des);
 
 #endif
