@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include "mycal.h"
 
 int main(){
-    char input[100] = "BEEF_16 * A12_12";
-    int32_t base = 16;
-    char *pResult = NULL;
-    int32_t RETURN = calculate(input, base, &pResult);
-    //printf("%d\n", RETURN);
-    printf("%s\n", pResult);
+    uint8_t tmp = 202;
+    uint8_t base = 0x03;
+    // printf("%d\n", tmp & base);
+    for(int32_t i = 3;i >= 0;i--){
+        printf("%d\n", (tmp >> (i << 1) & base));
+    }
+    
+    return 0;
 }

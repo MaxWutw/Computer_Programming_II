@@ -2,31 +2,39 @@
 
 int32_t calculate(char *pEpr, int32_t base, char **ppResult){
     int32_t sum = 0;
+    if(!valid(pEpr)){
+        return -1;
+    }
     if(pEpr[0] == '+' || pEpr[0] == '-' || pEpr[0] == '*') return -1;
     if(!pEpr) return -1;
     char *it = pEpr;
     int32_t stack[200], idx = 0;
     for(int32_t i = 0;i < 200;i++) stack[i] = 0;
-    stack[idx] = convert2base10(it);
+    int8_t wrong = 0;
+    stack[idx] = convert2base10(it, &wrong);
+    if(wrong == 1) return -1;
     idx++;
     while(*it != 0){
         while(*it != ' ' && *it != 0) it++;
         if(*(it + 1) == '+'){
             it += 3;
-            stack[idx++] = convert2base10(it);
+            stack[idx++] = convert2base10(it, &wrong);
+            if(wrong == 1) return -1;
         }
         else if(*(it + 1) == '-'){
             it += 3;
-            stack[idx++] = -convert2base10(it++);
+            stack[idx++] = -convert2base10(it++, &wrong);
+            if(wrong == 1) return -1;
         }
         else if(*(it + 1) == '*'){
             it += 3;
-            int32_t tmp = convert2base10(it);
+            int32_t tmp = convert2base10(it, &wrong);
+            if(wrong == 1) return -1;
             stack[idx - 1] = stack[idx - 1] * tmp;
         }
     }
     for(int i = 0;i < 200;i++) sum += stack[i];
-    printf("%d\n", sum);
+    // printf("%d\n", sum);
     int32_t quotient = abs(sum), remainder;
     char number[105], answer[105];
     int32_t leng = 0;
@@ -37,7 +45,7 @@ int32_t calculate(char *pEpr, int32_t base, char **ppResult){
         quotient = quotient / base;
     }
     if(sum < 0) number[leng++] = '-';
-    *ppResult = (char*)malloc(sizeof(char) * leng);
+    
     for(int32_t i = 0;i < leng;i++) answer[i] = number[leng - i - 1];
     answer[leng] = '_';
     int32_t num = base;
@@ -50,22 +58,42 @@ int32_t calculate(char *pEpr, int32_t base, char **ppResult){
     }
     for(int32_t i = 0;i < tmp_len;i++) answer[++leng] = tmp[tmp_len - i - 1];
     answer[++leng] = 0;
-    *ppResult = answer;
-    printf("%s\n", *ppResult);
+    *ppResult = (char*)malloc(sizeof(char) * leng);
+    // *ppResult = answer;
+    // for(int32_t i = 0;i <= leng;i++) *ppResult[i] = answer[i];
+    // *ppResult[leng] = 'a';
+    // printf("char: %c\n", *ppResult[0]);
+    strcpy(*ppResult, answer);
+    // printf("%p %p\n", &ppResult, answer);
+    // printf("%s\n", *ppResult);
 
     return 0;
 }
 
-int32_t convert2base10(char *data){
-    int32_t base = 0;
-    int32_t sum = 0;
+int32_t convert2base10(char *data, int8_t *wrong){
+    int32_t base = 0, sum = 0, judge = 1;
+    int32_t maxi_char = '0';
     for(char *it = data;*it != 0 && *it != ' ';it++){
         if(*it == '_'){
+            judge = 0;
             it++;
             while(*it != 0 && *it != ' '){
                 base = (*it - '0') + (base * 10);
                 it++;
             }
+        }
+        if(*it > maxi_char && judge) maxi_char = *it;
+    }
+    if(base < 10){ 
+        if(maxi_char - '0' >= base){
+            *wrong = 1;
+            return 0;
+        }
+    }
+    else if(base > 10){
+        if(maxi_char - 'A' + 10 >= base){
+            *wrong = 1;
+            return 0;
         }
     }
     for(char *it = data;*it != '_';it++){
@@ -75,11 +103,11 @@ int32_t convert2base10(char *data){
     return sum;
 }
 
-int32_t digit(int32_t num){
-    int32_t ret = 0;
-    while(num){
-        num /= 10;
-        ret++;
+int8_t valid(const char* str){
+    int64_t space = 0, op = 0;
+    for(const char* i = str;*i != 0;i++){
+        if(*i == ' ') space++;
+        else if(*i == '+' || *i == '-' || *i == '*') op++;
     }
-    return ret;
+    return (space == op * 2 ? 1 : 0);
 }
