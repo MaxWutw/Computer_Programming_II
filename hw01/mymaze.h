@@ -19,13 +19,14 @@ typedef struct _sPoint {
 } sPoint;
 
 typedef struct _sPath {
-    uint32_t length; // Path length. uint32_t cost; // Cost
+    uint32_t length; // Path length. 
+    uint32_t cost; // Cost
     sPoint *pPath; // An array of all points in order. 
 } sPath;
 // The start point is pMaze[0][0] and the exit point is pMaze[row-1][col-1]
 // If there is no path, return 0; If there is any errors in inputs, return -1;otherwise, return 1;
 
 int32_t find_min_path( const sRoom *pMaze, const uint8_t row, const uint8_t col, sPath *pMinPath );
-
+void dfs(const sRoom *pMaze, uint8_t x, uint8_t y, const uint8_t row, const uint8_t col, sPath *shortest, sPath *travel, int8_t *visited);
 
 #endif

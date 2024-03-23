@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 int32_t calculate(char *pEpr, int32_t base, char **ppResult);
-int32_t convert2base10(char *data, int8_t *wrong);
+int64_t convert2base10(char *data, int8_t *wrong);
 int8_t valid(const char* str);
 
 #endif
