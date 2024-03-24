@@ -9,7 +9,7 @@ all:
 	-gcc -fsanitize=address hw0103.o mychain.o -o hw0103 -lasan -lubsan 
 	-gcc -g -fsanitize=address -c hw0104.c mymaze.c 
 	-gcc hw0104.o mymaze.o -o hw0104 -lasan -lubsan 
-	# -gcc hw0105.c -o hw0105
+	-gcc -g hw0105.c -o hw0105
 
 clean:
-	rm hw0101 hw0102 hw0103 hw0104 hw0105
+	rm -f hw010{1..4} hw010{1..4}.o *.o
