@@ -54,4 +54,11 @@ The mymaze.h file for finding the minimum path through a maze represented as a g
 
 ### hw0105
 
+This program is a simple implementation of a taiko game. It reads input from stdin, interprets the commands, and generates taiko chart data in a JSON format, and output with stdout.
+
+- START: Marks the beginning of a new drum chart.
+- END: Marks the end of a drum chart.
+- MEASURE: Specifies the time signature of the drum chart.
+- BPMCHANGE: Specifies a change in BPM (Beats Per Minute).
+
 ## Something to notify TAs

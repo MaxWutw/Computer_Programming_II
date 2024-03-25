@@ -41,13 +41,12 @@
 // //     return 0;
 // // }
 
-
-
 #include "mystring.h"
 #include <string.h>
 int main()
 {
-
+    // freopen("test.in", "r", stdin);
+    // 1: mystrchr 2: mystrrchr 3: mystrpbrk 4: mystrspn 5: mystrcspn 6: mystrstr 7: mystrtok
     while (1)
     {
         int type = 0;
@@ -64,7 +63,7 @@ int main()
             printf("mystrchr\n");
             compC = mystrchr("abcdedf", 'e');
             compS = strchr("abcdedf", 'e');
-            printf("%s\n", *compC == *compS ? "true" : "false");
+            printf("%s\n", strcmp(compC, compS) == 0 ? "true" : "false");
             break;
         case 1:
             printf("mystrchr\n");
@@ -74,12 +73,8 @@ int main()
             scanf("%c", &c);
             compC = mystrchr(input, c);
             compS = strchr(inputcpy, c);
-            if(compS == NULL && compC == NULL){
-                printf("true\n");
-                break;
-            }
-            else if((compS == NULL && compC != NULL) || \
-            (compS != NULL && compC == NULL)){
+            if (compC == NULL && compS == NULL)
+            {
                 printf("true\n");
                 break;
             }
@@ -94,7 +89,7 @@ int main()
             printf("mystrrchr\n");
             compC = mystrrchr("abcdedf", 'e');
             compS = strrchr("abcdedf", 'e');
-            printf("%s\n", *compC == *compS ? "true" : "false");
+            printf("%s\n", strcmp(compC, compS) == 0 ? "true" : "false");
             break;
         case 2:
             printf("mystrrchr\n");
@@ -104,6 +99,11 @@ int main()
             scanf("%c", &c2);
             compC = mystrrchr(input, c2);
             compS = strrchr(inputcpy, c2);
+            if (compC == NULL && compS == NULL)
+            {
+                printf("true\n");
+                break;
+            }
             printf("%s\n", *compC == *compS ? "true" : "false");
             for (size_t i = 0; i < strlen(compC); i++)
             {
@@ -115,7 +115,7 @@ int main()
             printf("mystrpbrk\n");
             compC = mystrpbrk("abcdedf", "ed");
             compS = strpbrk("abcdedf", "ed");
-            printf("%s\n", *compC == *compS ? "true" : "false");
+            printf("%s\n", strcmp(compC, compS) == 0 ? "true" : "false");
             break;
         case 3:
             printf("mystrpbrk\n");
@@ -125,6 +125,11 @@ int main()
             scanf("%s", c3);
             compC = mystrpbrk(input, c3);
             compS = strpbrk(inputcpy, c3);
+            if (compC == NULL && compS == NULL)
+            {
+                printf("true\n");
+                break;
+            }
             for (size_t i = 0; i < strlen(compC); i++)
             {
                 printf("%d", compC[i] == compS[i]);
@@ -134,7 +139,6 @@ int main()
         case -4:
             printf("mystrspn\n");
             printf("%s\n", mystrspn("abcdedf", "ed") == strspn("abcdedf", "ed") ? "true" : "false");
-
             break;
 
         case 4:
@@ -144,7 +148,7 @@ int main()
             char c4[1000];
             scanf("%s", c4);
             printf("%s\n", mystrspn(input, c4) == strspn(inputcpy, c4) ? "true" : "false");
-            printf("original: %s\n", strcmp(input,inputcpy)==0 ? "true" : "false");
+            printf("original: %s\n", strcmp(input, inputcpy) == 0 ? "true" : "false");
             break;
         case -5:
             printf("mystrcspn\n");
@@ -158,7 +162,7 @@ int main()
             char c5[1000];
             scanf(" %s", c5);
             printf("%s\n", mystrcspn(input, c5) == strcspn(inputcpy, c5) ? "true" : "false");
-            printf("original: %s\n", strcmp(input, inputcpy)==0 ? "true" : "false");
+            printf("original: %s\n", strcmp(input, inputcpy) == 0 ? "true" : "false");
             break;
         case -6:
             printf("mystrstr\n");
@@ -174,6 +178,11 @@ int main()
             scanf(" %s", c6);
             compC = mystrstr(input, c6);
             compS = strstr(inputcpy, c6);
+            if (compC == NULL && compS == NULL)
+            {
+                printf("true\n");
+                break;
+            }
             for (size_t i = 0; i < strlen(compC); i++)
             {
                 printf("%d", compC[i] == compS[i]);
@@ -184,12 +193,13 @@ int main()
                 printf("%d", compC[i] == compS[i]);
             }
             printf("\n");
-
             break;
 
         case -7:
             printf("mystrtok\n");
-            printf("%s\n",strcmp( mystrtok("abcdedf", "ed") ,strtok("abcdedf", "ed"))==0 ? "true" : "false");
+            strtok("abcdedf", "ed");
+            mystrtok("abcdedf", "ed");
+
             break;
         case 7:
             printf("mystrtok\n");
@@ -199,7 +209,11 @@ int main()
             scanf("%s", c7);
             compC = mystrtok(input, c7);
             compS = strtok(inputcpy, c7);
-
+            if (compC == NULL && compS == NULL)
+            {
+                printf("true\n");
+                break;
+            }
             for (size_t i = 0; i < strlen(compC); i++)
             {
                 printf("%d", compC[i] == compS[i]);

@@ -30,6 +30,7 @@ size_t mystrspn(const char *s, const char *accept){
             if(*it == *iter){
                 judge = 1;
                 leng++;
+                break;
             }
         }
         if(!judge) break;
@@ -37,6 +38,7 @@ size_t mystrspn(const char *s, const char *accept){
     }
     return leng;
 }
+
 size_t mystrcspn(const char *s, const char *reject){
     if(!s || !reject) return 0;
     int32_t leng = 0;
@@ -76,7 +78,7 @@ char *mystrtok(char *str, const char *delim){
     static char* idx = NULL;
     if(str == NULL){
         str = idx;
-        if(str == NULL) return NULL;
+        if(idx == NULL) return NULL;
     }
     char *tmp = mystrpbrk(str, delim);
     if(tmp){

@@ -1,0 +1,12 @@
+--- ../2024_NTNU_ComputerProgramming-II_TestCase/HW01//01/darrin/out/hw0101_07.out	2024-03-25 09:40:10.000000000 +0800
++++ output7.out	2024-03-25 19:02:24.000000000 +0800
+@@ -5,7 +5,7 @@
+ true
+ original: true
+ mystrtok
+-111111
+-1111111
++
++
+ mystrrchr
+ true
