@@ -52,8 +52,11 @@ int32_t lcm(int32_t a, int32_t b) {
 int32_t return_length(char *str){
     int32_t ret = 0;
     while(*str != 0){
+        if(*str == ' ' || *str == '\n' || *str == ','){
+            str++;
+            continue;
+        }
         str++;
-        if(*str == ' ' || *str == '\n' || *str == ',') continue;
         ret++;
     }
     return ret;
@@ -107,38 +110,48 @@ int main(){
                 // printf("BPMCHANGE: %f\n", BPM);
             }
         }
-        else if(inp[0] >= '0' && inp[0] <= '9'){
-            // printf("%s\n", inp);
+        else if((inp[0] >= '0' && inp[0] <= '9') || inp[0] == ','){
+            // printf("inp: %s\n", inp);
             int32_t leng = return_length(inp), idx = 0;
             char str[500];
             int32_t extend;
-            if(leng < beat){
+            // printf("length: %d\n", leng);
+            if(leng < beat && leng != 0){
                 extend = lcm(leng, beat);
                 int32_t repeat = (extend / leng);
                 int32_t idx_rep = 0;
                 for(char *it = inp;*it != 0;it++){
                     if(*it == ',' || *it == '\n') continue;
+                    // if(*it != '1' && *it != '2' && *it != '3' && *it != '4') *it = '0';
                     for(int32_t i = 0;i < repeat;i++){
                         if(i == 0) str[idx_rep++] = *it;
                         else str[idx_rep++] = '0';
                     }
                 }
+                leng = extend;
                 str[idx_rep] = 0;
             }
             else if(leng == 0){
                 for(int32_t i = 0;i < beat;i++) str[i] = '0';
+                str[beat] = 0;
+                leng = beat;
             }
             else{
                 int32_t idx_cpy = 0;
                 for(char *it = inp;*it != 0;it++){
                     if(*it == ',' || *it == '\n') continue;
-                    str[idx_cpy++] = *it;
+                    // if(*it != '1' || *it != '2' || *it != '3' && *it != '4') str[idx_cpy++] = '0';
+                    else str[idx_cpy++] = *it;
                 }
                 str[idx_cpy] = 0;
             }
             // printf("%d %d\n", leng, beat);
             // printf("%s\n", str);
             // continue;
+            for(int32_t i = 0;i < leng;i++){
+                if(str[i] != '1' && str[i] != '2' && str[i] != '3' && str[i] != '4') str[i] = '0';
+            }
+            // printf("str: %s\n", str);
             float time = 0.0;
             duration = (float)((float)60 / BPM) * ((float)beat / (float)leng) * ((float)4 / (float)note);
             for(char *it = str;*it != 0;it++){
@@ -161,6 +174,7 @@ int main(){
                 idx++;
             }
             pre = time + duration;
+            // printf("%s\n", str);
         }
         else{
             char *token = strtok(inp, ":");
