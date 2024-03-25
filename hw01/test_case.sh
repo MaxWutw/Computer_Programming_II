@@ -5,7 +5,7 @@ read -p "Which test case you need(default=1): " test;
 if [ -z "$test" ];then
     test=1
 fi
-dir="../2024_NTNU_ComputerProgramming-II_TestCase/HW01/"
+dir="../test_case/HW01/"
 
 
 read -p "Enter your test case amount(default=10): " cases;
