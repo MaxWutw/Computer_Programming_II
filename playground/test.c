@@ -1,14 +1,17 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdint.h>
-void test(char *str){
-
+int32_t digit(int32_t num){
+    int32_t ret = 0;
+    while(num){
+        num /= 10;
+        ret++;
+    }
+    return ret;
 }
-int main(){
-    char str[100];
-    for(int i = 0;i < 20;i++) str[i] = 'a' + i;
-    str[20] = 'z';
-    printf("%s\n", str);
-    printf("%d\n", str[21]);
-    
+int main() {
+    int32_t readed = 1;
+    printf("%d\n", digit(readed));
+
     return 0;
 }
