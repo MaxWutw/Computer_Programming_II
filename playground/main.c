@@ -1,13 +1,16 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
+#include <stdlib.h>
+void func2(){
+	printf("the static number is: %d", num);
+}
 
-#define ROWS 3
-#define COLS 3
-
+void func(static int32_t num, int32_t b){
+	func();
+}
 int main() {
-    int8_t a = 47;
-    uint8_t base = 0x03;
-    printf("%d\n", (a >> 6) & base);
-    
-    return 0;
+    func(50, 100);
+
+	return 0;
 }
