@@ -33,9 +33,19 @@ int32_t digit(int32_t num){
 }
 
 void bubbleSortByPts(team arr[], int n) {
-    for(int32_t i = 0; i < n-1; i++){
-        for(int32_t j = 0; j < n-i-1; j++){
+    for(int32_t i = 0;i < n-1; i++){
+        for(int32_t j = 0;j < n-i-1; j++){
             if(arr[j].pts < arr[j+1].pts){
+                team temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+            else if(arr[j].pts == arr[j+1].pts && arr[j].gd < arr[j + 1].gd){
+                team temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+            else if(arr[j].pts == arr[j+1].pts && arr[j].gf < arr[j + 1].gf){
                 team temp = arr[j];
                 arr[j] = arr[j+1];
                 arr[j+1] = temp;
@@ -71,7 +81,7 @@ int main(){
             }
         }
         if(!found){
-            strcpy(session[idx++].name, tmp);
+            strcpy(session[idx].name, tmp);
             session[idx].w = 0;
             session[idx].d = 0;
             session[idx].l = 0;
@@ -79,6 +89,8 @@ int main(){
             session[idx].ga = 0;
             session[idx].gd = 0;
             session[idx].pts = 0;
+            home = idx;
+            idx++;
         }
         found = 0;
         if(tmp != NULL) tmp = strtok(NULL, ",");
@@ -90,7 +102,7 @@ int main(){
             }
         }
         if(!found){
-            strcpy(session[idx++].name, tmp);
+            strcpy(session[idx].name, tmp);
             session[idx].w = 0;
             session[idx].d = 0;
             session[idx].l = 0;
@@ -98,6 +110,8 @@ int main(){
             session[idx].ga = 0;
             session[idx].gd = 0;
             session[idx].pts = 0;
+            away = idx;
+            idx++;
         }
         int32_t cnt = 0;
         if(tmp != NULL){
@@ -155,7 +169,7 @@ int main(){
             printf("%-14s: %3d %5d %5d %6d %5d %6d %5d\n", session[i].name, session[i].w, session[i].d, session[i].l, session[i].gf, session[i].ga, session[i].gd, session[i].pts);
         // else 
         //     printf("%s: %3d %5d %5d %6d %5d %5d %5d\n", session[i].name, session[i].w, session[i].d, session[i].l, session[i].gf, session[i].ga, session[i].gd, session[i].pts);
-        printf("\n");
+        // printf("\n");
         // break;
     }
 

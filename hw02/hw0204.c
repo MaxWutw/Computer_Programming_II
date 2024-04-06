@@ -44,7 +44,6 @@ void print_bmp_header( sBmpHeader *pHeader )
 
 
 int main(){
-    freopen("test.in", "r", stdin);
     char filename[50], outputname[50];
     FILE *pFile, *pDestination;
     float angle;
@@ -52,8 +51,12 @@ int main(){
     fscanf(stdin, "%s", filename);
     fprintf(stdout, "Please input the output BMP file name: ");
     fscanf(stdin, "%s", outputname);
-    fprintf(stdout, "Angle (0 -90): ");
+    fprintf(stdout, "Angle (0-90): ");
     fscanf(stdin, "%f", &angle);
+    if(angle >= 90 || angle < 0){
+        fprintf(stdout, "Error: The input should bewteen 0 and 90.\n");
+        return 0;
+    }
     if((pFile = fopen(filename, "rb")) == NULL){
         fprintf(stderr, "Error: Unable to open file for reading and writing\n");
         return 0;
@@ -64,21 +67,79 @@ int main(){
     }
     sBmpHeader header;
     fread(&header, sizeof(header), 1, pFile);
-    int32_t side = (header.height / sin(angle)) * cos(angle);
+    angle = 90.0 - angle;
+    double radian = angle * M_PI / 180.0;
+    int32_t side = (header.height / sin(radian)) * cos(radian), reverse = 0;
+    // int32_t side = header.height * (1 / tan(angle)), reverse = 0;
+    // printf("%d\n", side);
+    int32_t origin_width = header.width;
     header.width += side;
+    header.bitmap_size = header.width * header.height * (header.bpp / 4);
+    header.size = 54 + header.bitmap_size;
+    int32_t padding = side, color = (header.bpp / 8);
+    side *= color;
     fwrite(&header, sizeof(header), 1, pDestination);
-    int32_t row_size = ((header.bpp * header.width) / 32) * 4;  
+    int32_t oppo = 0;
+    if(header.height < 0) oppo = 1;
+    float remain = 0.0;
     while(!feof(pFile)){
-        uint8_t origin[999] = {0}, modified[999] = {0};
-        size_t cnt = fread(origin, 1, 999, pFile);
-        for(size_t i = 0;i < side;i++){
-            modified[i] = 255;
+        uint8_t origin[999 * 10] = {0}, modified[999 * 10] = {0};
+        size_t cnt = fread(origin, 1, origin_width * color, pFile);
+        int32_t idx = 0;
+        // printf("reverse: %d\n", reverse);
+        if(!oppo){
+            for(size_t i = 0;i < reverse;i++){
+                modified[idx] = 255;
+                idx++;
+            }
         }
-        for(int32_t i = side;i < row_size;i++) modified[i] = 0;
-        side--;
-        fwrite(modified, cnt, 1, pDestination);
+        else{
+            for(size_t i = 0;i < side;i++){
+                modified[idx] = 255;
+                idx++;
+            }
+        }
+        for(int32_t i = 0;i < cnt;i++){
+            modified[idx] = origin[i];
+            idx++;
+        }
+        if(!oppo){
+            for(size_t i = 0;i < side;i++){
+                modified[idx] = 255;
+                idx++;
+            }
+        }
+        else{
+            for(size_t i = 0;i < reverse;i++){
+                modified[idx] = 255;
+                idx++;
+            }
+        }
+        for(int32_t i = 0;i < ((4 - ((header.width * color) % 4)) % 4);i++){
+            modified[idx] = 0;
+            idx++;
+        }
+        fwrite(modified, idx, 1, pDestination);
+        float tmp = (float)padding / (float)header.height;
+        if(tmp < 0) tmp = -tmp;
+        // printf("remain: %f\n", remain);
+        if(tmp >= 1.0){
+            remain += (tmp - 1);
+            reverse += color;
+            side -= color;
+        }
+        else if(tmp < 1.0){
+            remain += tmp;
+        }
+        // printf("fdsfsads\n");
+        if(remain > 1.0){
+            // printf("fdsafsadf\n");
+            reverse += color;
+            side -= color;
+            remain -= 1.0;
+        }
     }
-    print_bmp_header(&header);
+    // print_bmp_header(&header);
     fclose(pFile);
     fclose(pDestination);
 
