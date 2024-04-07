@@ -61,8 +61,37 @@ int main(){
         float probability = 0.0;
         for(int32_t i = 0;i < 5;i++){
             if(feedback[i] == 'B'){
-                fail[fail_idx] = tolower(guess[i]);
-                fail_idx++;
+                // fail[fail_idx] = tolower(guess[i]);
+                // fail_idx++;
+                int8_t ctrl = 1;
+                for(int32_t j = 0;j < 5;j++){
+                    if(guess[i] == guess[j] && feedback[j] == 'Y') ctrl = 0;
+                }
+                if(ctrl){
+                    fail[fail_idx] = tolower(guess[i]);
+                    fail_idx++;
+                }
+                if(i == 0){
+                    not1[n1_idx] = tolower(guess[i]);
+                    n1_idx++;
+                }
+                else if(i == 1){
+                    not2[n2_idx] = tolower(guess[i]);
+                    // printf("%c\n", guess[i]);
+                    n2_idx++;
+                }
+                else if(i == 2){
+                    not3[n3_idx] = tolower(guess[i]);
+                    n3_idx++;
+                }
+                else if(i == 3){
+                    not4[n4_idx] = tolower(guess[i]);
+                    n4_idx++;
+                }
+                else if(i == 4){
+                    not5[n5_idx] = tolower(guess[i]);
+                    n5_idx++;
+                }
             }
             else if(feedback[i] == 'G'){
                 // total[tolower(guess[i]) - 'a'] = 1;

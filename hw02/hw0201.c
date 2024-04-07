@@ -98,7 +98,7 @@ int main(){
                         if(str != NULL) str = strtok(NULL, ",");
                         // printf("%s\n", str);
                     }
-                    str+=3;
+                    str += 3;
                     printf("\033[38;2;%d;%d;%dm", red, green, blue);
                     printf("%s", str);
                     printf("\033[0m");
