@@ -36,6 +36,7 @@ int32_t set_color(const char *str){
     else{
         while(*str != 0){
             val = (*str - '0') + (val * 10);
+            str++;
         }
     }
     return val;
@@ -56,10 +57,12 @@ int main(){
         fprintf(stderr, "The time shift should between -10 and 10\n");
         return 0;
     }
+    printf("%d\n", time_shift);
+    speed = 2;
     fprintf(stdout, "Speed (0.25 ,0.5 ,0.75 ,1 ,1.25 ,1.5 ,1.75 ,2): ");
     fscanf(stdin, "%f", &speed);
-    if(speed != 0.25 || speed != 0.5 || speed != 0.75 || speed != 1 || speed != 1.25 || speed != 1.5 || speed != 1.75 || speed != 2){
-        fprintf(stderr, "The speed shout be 0.25 ,0.5 ,0.75 ,1 ,1.25 ,1.5 ,1.75 ,2!\n");
+    if(speed != 0.25 && speed != 0.5 && speed != 0.75 && speed != 1 && speed != 1.25 && speed != 1.5 && speed != 1.75 && speed != 2){
+        fprintf(stderr, "The speed should be 0.25 ,0.5 ,0.75 ,1 ,1.25 ,1.5 ,1.75 ,2!\n");
         return 0;
     }
     if((pFile = fopen(filename, "r")) == NULL){
@@ -68,6 +71,7 @@ int main(){
     }
     float time_cur = (float)time_shift;
     while(!feof(pFile)){
+        // printf("fdsfa");
         char buffer[500];
         fgets(buffer, 450, pFile);
         char *str = strtok(buffer, ":");
@@ -80,26 +84,30 @@ int main(){
             red = (color_value >> 16) & 0xFF;
             green = (color_value >> 8) & 0xFF;
             blue = color_value & 0xFF;
+            // printf("%d\n", color_value);
         }
         if(strcmp(str, "Dialogue") == 0){
             if(str != NULL) str = strtok(NULL, ",");
             if(str != NULL) str = strtok(NULL, ",");
             if(str != NULL){
                 float start = str2sec(str), end = 0.0;
-                if(start > time_cur){
+                if(str != NULL) str = strtok(NULL, ",");
+                end = str2sec(str);
+                if(end > time_cur){
                     // printf("%f\n", start);
-                    sleep((start - time_cur) / speed);
+                    if(start >= time_cur) sleep((start - time_cur) / speed);
+                    else sleep((time_cur - start) / speed);
                     time_cur = start;
-                    if(str != NULL) str = strtok(NULL, ",");
+                    
                     // printf("%s\n", str);
-                    end = str2sec(str);
+                    // end = str2sec(str);
                     int32_t cnt = 4;
                     while(cnt--){
                         if(str != NULL) str = strtok(NULL, ",");
                         // printf("%s\n", str);
                     }
                     str += 3;
-                    printf("\033[38;2;%d;%d;%dm", red, green, blue);
+                    printf("\033[38;2;%d;%d;%dm", blue, green, red);
                     printf("%s", str);
                     printf("\033[0m");
                     // printf("%f\n", end);

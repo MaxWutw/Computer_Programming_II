@@ -1,5 +1,32 @@
 #include "bmp_func.h"
 
+struct _sBmpHeader{
+    char bm[2];
+    uint32_t size;
+    uint32_t reserve;
+    uint32_t offset;
+    uint32_t header_size;
+    int32_t width;
+    int32_t height;
+    uint16_t planes; // must be 1
+    uint16_t bpp; // bits per pixel
+    uint32_t compression;
+    uint32_t bitmap_size;
+    uint32_t horizontal_res;
+    uint32_t vertical_res;
+    uint32_t used;
+    uint32_t important;
+}__attribute__ ((__packed__));
+
+struct _sPixel{
+    uint8_t b;
+    uint8_t g;
+    uint8_t r;
+}__attribute__ ((__packed__));
+
+typedef struct _sBmpHeader sBmpHeader;
+typedef struct _sPixel sPixel;
+
 int32_t parseheader(FILE *pFile, struct sBmpHeader *header){
     fread(header, sizeof(*header), 1, pFile);
 }
@@ -19,7 +46,7 @@ int32_t writebmp(){
     
 }
 
-void print_bmp_header(sBmpHeader *pHeader){
+void print_bmp_header(struct sBmpHeader *pHeader){
     printf( "ID: %c%c\n", pHeader -> bm[0], pHeader -> bm[1] );
     printf( "Size: %u\n", pHeader -> size );
     printf( "Reserve: %u\n", pHeader -> reserve );

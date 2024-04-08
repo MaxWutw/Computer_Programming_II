@@ -44,6 +44,7 @@ void print_bmp_header( sBmpHeader *pHeader )
 
 
 int main(){
+    // freopen("test.in", "r", stdin);
     char filename[50], outputname[50];
     FILE *pFile, *pDestination;
     float angle;
@@ -73,6 +74,7 @@ int main(){
     // int32_t side = header.height * (1 / tan(angle)), reverse = 0;
     // printf("%d\n", side);
     int32_t origin_width = header.width;
+    int32_t padding_sz = (((header.bpp * header.width + 31) / 32) * 4) - (3 * header.width);
     header.width += side;
     header.bitmap_size = header.width * header.height * (header.bpp / 4);
     header.size = 54 + header.bitmap_size;
@@ -82,8 +84,9 @@ int main(){
     int32_t oppo = 0;
     if(header.height < 0) oppo = 1;
     float remain = 0.0;
+    int8_t temp[4];
     while(!feof(pFile)){
-        uint8_t origin[999 * 10] = {0}, modified[999 * 10] = {0};
+        uint8_t origin[999 * 10] = {0}, modified[padding * 2 + origin_width * color + 10000];
         size_t cnt = fread(origin, 1, origin_width * color, pFile);
         int32_t idx = 0;
         // printf("reverse: %d\n", reverse);
@@ -122,24 +125,27 @@ int main(){
         fwrite(modified, idx, 1, pDestination);
         float tmp = (float)padding / (float)header.height;
         if(tmp < 0) tmp = -tmp;
+        // printf("%f\n", tmp);
         // printf("remain: %f\n", remain);
         while(tmp >= 1.0){
-            remain += 1;
-            reverse += color;
-            side -= color;
+            remain += 1.0;
+            // reverse += color;
+            // side -= color;
             tmp -= 1.0;
         }
-        remain += (tmp - 1);
+        // remain += tmp;
         if(tmp < 1.0){
             remain += tmp;
         }
+        // printf("%f\n", remain);
         // printf("fdsfsads\n");
-        while(remain > 1.0){
+        while(remain >= 1.0){
             // printf("fdsafsadf\n");
             reverse += color;
             side -= color;
             remain -= 1.0;
         }
+        fread(temp, padding_sz, 1, pFile);
     }
     // print_bmp_header(&header);
     fclose(pFile);
