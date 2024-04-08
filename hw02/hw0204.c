@@ -123,16 +123,18 @@ int main(){
         float tmp = (float)padding / (float)header.height;
         if(tmp < 0) tmp = -tmp;
         // printf("remain: %f\n", remain);
-        if(tmp >= 1.0){
-            remain += (tmp - 1);
+        while(tmp >= 1.0){
+            remain += 1;
             reverse += color;
             side -= color;
+            tmp -= 1.0;
         }
-        else if(tmp < 1.0){
+        remain += (tmp - 1);
+        if(tmp < 1.0){
             remain += tmp;
         }
         // printf("fdsfsads\n");
-        if(remain > 1.0){
+        while(remain > 1.0){
             // printf("fdsafsadf\n");
             reverse += color;
             side -= color;
