@@ -34,21 +34,22 @@ float al2prob(char a){
 int main(){
     fprintf(stdout, "Advice:   EERIE\n");
     FILE *pFile;
+    char fail[800], not1[800], not2[800], not3[800], not4[800], not5[800];
+    int32_t fail_idx = 0, n1_idx = 0, n2_idx = 0, n3_idx = 0, n4_idx = 0, n5_idx = 0;
     if((pFile = fopen("en_US.dic", "r")) == NULL){
         fprintf(stderr, "Error: Unable to open file for reading and writing\n");
         return 0;
     }
-    char feedback[10], alphabet[10], position[10], guess[10] = "EERIE", fail[800];
-    int32_t total[30];
-    int32_t alpha = 0, fail_idx = 0;
+    char feedback[10], alphabet[10], position[10], guess[10] = "EERIE";
+    // int32_t total[30];
+    int32_t alpha = 0;
     for(int32_t i = 0;i < 5;i++){
         position[i] = 0;
         alphabet[i] = 0;
-        
     }
-    for(int32_t i = 0;i < 30;i++){
-        total[i] = 0;
-    }
+    // for(int32_t i = 0;i < 30;i++){
+    //     total[i] = 0;
+    // }
     while(1){
         fprintf(stdout, "Feedback: ");
         fscanf(stdin, "%s", feedback);
@@ -60,31 +61,71 @@ int main(){
         float probability = 0.0;
         for(int32_t i = 0;i < 5;i++){
             if(feedback[i] == 'B'){
-                // printf("%c ", guess[i]);
-                int8_t inp = 1;
+                // fail[fail_idx] = tolower(guess[i]);
+                // fail_idx++;
+                int8_t ctrl = 1;
                 for(int32_t j = 0;j < 5;j++){
-                    if(i != j && guess[i] == guess[j] && (feedback[j] == 'G' || feedback[j] == 'Y')){
-                        
-                        inp = 0;
-                    }
-                    // printf("%c ", guess[j]);
+                    if(guess[i] == guess[j] && feedback[j] == 'Y') ctrl = 0;
                 }
-                // printf("number: %d\n", tolower(guess[i]) - 'a');
-                // printf("total: %d\n", total[tolower(guess[i]) - 'a']);
-                if(inp && total[tolower(guess[i]) - 'a'] == 0){
+                if(ctrl){
                     fail[fail_idx] = tolower(guess[i]);
-                    // printf("%c\n", fail[fail_idx]);
                     fail_idx++;
+                }
+                if(i == 0){
+                    not1[n1_idx] = tolower(guess[i]);
+                    n1_idx++;
+                }
+                else if(i == 1){
+                    not2[n2_idx] = tolower(guess[i]);
+                    // printf("%c\n", guess[i]);
+                    n2_idx++;
+                }
+                else if(i == 2){
+                    not3[n3_idx] = tolower(guess[i]);
+                    n3_idx++;
+                }
+                else if(i == 3){
+                    not4[n4_idx] = tolower(guess[i]);
+                    n4_idx++;
+                }
+                else if(i == 4){
+                    not5[n5_idx] = tolower(guess[i]);
+                    n5_idx++;
                 }
             }
             else if(feedback[i] == 'G'){
-                total[tolower(guess[i]) - 'a'] = 1;
+                // total[tolower(guess[i]) - 'a'] = 1;
                 position[i] = tolower(guess[i]);
             }
             else if(feedback[i] == 'Y'){
-                total[tolower(guess[i]) - 'a'] = 1;
+                if(i == 0){
+                    not1[n1_idx] = tolower(guess[i]);
+                    n1_idx++;
+                }
+                else if(i == 1){
+                    not2[n2_idx] = tolower(guess[i]);
+                    // printf("%c\n", guess[i]);
+                    n2_idx++;
+                }
+                else if(i == 2){
+                    not3[n3_idx] = tolower(guess[i]);
+                    n3_idx++;
+                }
+                else if(i == 3){
+                    not4[n4_idx] = tolower(guess[i]);
+                    n4_idx++;
+                }
+                else if(i == 4){
+                    not5[n5_idx] = tolower(guess[i]);
+                    n5_idx++;
+                }
+                // total[tolower(guess[i]) - 'a'] = 1;
                 alphabet[alpha] = tolower(guess[i]);
                 alpha++;
+            }
+            else{
+                fprintf(stderr, "ERROR INPUT! Your input must be G or Y or B.\n");
+                return 0;
             }
         }
         // for(int32_t i = 0;i < fail_idx;i++) printf("%c ", fail[i]);
@@ -98,17 +139,80 @@ int main(){
             // printf("%s\n", str);
             if(strlen(str) != 5) continue;
             int8_t out = 0;
+            int32_t tmp_idx = 0;
             for(const char *it = str;*it != 0;it++){
                 for(int32_t i = 0;i < fail_idx;i++){
-                    if(fail[i] == tolower(*it)){
+                    if(fail[i] == tolower(*it) && feedback[tmp_idx] != 'G'){
+                        // printf("%s\n", str);
                         out = 1;
-                        // printf("%    s\n", str);
                         break;
                     }
                 }
+                tmp_idx++;
                 if(out) break;
             }
             if(out) continue;
+            int8_t tmp_judge = 0;
+            // for(const char *it = str;*it != 0;it++){
+            //     if(not[not_idx] != 0 && not[not_idx] == tolower(*it)){
+            //         tmp_judge = 1;
+            //         break;
+            //     }
+            //     not_idx++;
+            // }
+            // printf("number: %d %d %d %d %d\n", n1_idx, n2_idx, n3_idx, n4_idx, n5_idx);
+            for(int32_t i = 0;i < 5;i++){
+                // if(not[i] != 0 && not[i] == tolower(str[i])){
+                //     printf("%c\n", not[i]);
+                //     tmp_judge = 1;
+                //     break;
+                // }
+                if(i == 0){
+                    for(int32_t j = 0;j < n1_idx;j++){
+                        if(not1[j] == tolower(str[i])){
+                            tmp_judge = 1;
+                            break;
+                        }
+                    }
+                }
+                else if(i == 1){
+                    // printf("%c\n", tolower(str[1]));
+                    for(int32_t j = 0;j < n2_idx;j++){
+                        // printf("%c\n", tolower(str[i]));
+                        if(not2[j] == tolower(str[i])){
+                            // printf("not\n");
+                            tmp_judge = 1;
+                            break;
+                        }
+                    }
+                }
+                else if(i == 2){
+                    for(int32_t j = 0;j < n3_idx;j++){
+                        if(not3[j] == tolower(str[i])){
+                            tmp_judge = 1;
+                            break;
+                        }
+                    }
+                }
+                else if(i == 3){
+                    for(int32_t j = 0;j < n4_idx;j++){
+                        if(not4[j] == tolower(str[i])){
+                            tmp_judge = 1;
+                            break;
+                        }
+                    }
+                }
+                else if(i == 4){
+                    for(int32_t j = 0;j < n5_idx;j++){
+                        if(not5[j] == tolower(str[i])){
+                            tmp_judge = 1;
+                            break;
+                        }
+                    }             
+                }
+                if(tmp_judge) break;
+            }
+            if(tmp_judge) continue;
             int8_t test = 0;
             for(int32_t i = 0;i < alpha;i++){
                 test = 1;
@@ -137,14 +241,19 @@ int main(){
                 idx++;
             }
             if(pos) continue;
-            if(tmp > probability){
+            if(tmp > probability + 0.0000001){
                 // printf("%f\n", tmp);
                 probability = tmp;
                 strcpy(guess, str);
             }
+            // printf("%s\n", str);
         }
         probability = 0.0;
-        fprintf(stdout, "Advice:   %s\n", guess);
+        fprintf(stdout, "Advice:   ");
+        for(int32_t i = 0;i < 5;i++){
+            fprintf(stdout, "%c", toupper(guess[i]));
+        }
+        printf("\n");
         rewind(pFile);
     }
     

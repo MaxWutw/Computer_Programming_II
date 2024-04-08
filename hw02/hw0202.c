@@ -41,11 +41,12 @@ void bubbleSortByPts(team arr[], int n) {
                 arr[j+1] = temp;
             }
             else if(arr[j].pts == arr[j+1].pts && arr[j].gd < arr[j + 1].gd){
+                // printf("dsfsdfa\n");
                 team temp = arr[j];
                 arr[j] = arr[j+1];
                 arr[j+1] = temp;
             }
-            else if(arr[j].pts == arr[j+1].pts && arr[j].gf < arr[j + 1].gf){
+            else if(arr[j].pts == arr[j+1].pts  && arr[j].gd == arr[j + 1].gd&& arr[j].gf < arr[j + 1].gf){
                 team temp = arr[j];
                 arr[j] = arr[j+1];
                 arr[j+1] = temp;
@@ -55,6 +56,7 @@ void bubbleSortByPts(team arr[], int n) {
 }
 
 int main(){
+    // freopen("test.in", "r", stdin);
     FILE *pFile = NULL;
     char filename[150];
     fprintf(stdout, "Please enter the data file name: ");
@@ -67,8 +69,12 @@ int main(){
     int32_t idx = 0;
     char buffer[150];
     fgets(buffer, 150, pFile);
+    int32_t ttest = 0;
     while(!feof(pFile)){
         fgets(buffer, 150, pFile);
+        if(strlen(buffer) < 10){
+            continue;
+        }
         char *tmp = strtok(buffer, ",");
         int32_t home = 0, away = 0;
         if(tmp != NULL) tmp = strtok(NULL, ",");
@@ -130,7 +136,7 @@ int main(){
                 session[home].l++;
                 session[away].pts += 3;
             }
-            else{
+            else if(home_point == away_point){
                 session[home].d++;
                 session[away].d++;
                 session[home].pts += 1;
@@ -140,8 +146,22 @@ int main(){
             session[away].gf += away_point;
             session[home].ga += away_point;
             session[away].ga += home_point;
-        }
+
+            // if(strcmp(session[away].name, "Newcastle") == 0){
+            //     printf("gf: %d\n", session[away].gf);
+            //     printf("points: %d\n", away_point);
+            //     printf("================\n");
+            //     ttest++;
+            // }
+            // if(strcmp(session[home].name, "Newcastle") == 0){
+            //     printf("gf: %d\n", session[home].gf);
+            //     printf("points: %d\n", home_point);
+            //     printf("================\n");
+            //     ttest++;
+            // }
+        } 
     }
+    // printf("%d\n", ttest);
     fclose(pFile);
     for(int32_t i = 0;i < idx;i++){
         session[i].gd = session[i].gf - session[i].ga;
@@ -163,10 +183,10 @@ int main(){
                 temp /= 10;
             }
             str[digit(session[i].gd) + 1] = '\0';
-            printf("%-14s: %3d %5d %5d %6d %5d %6s %5d\n", session[i].name, session[i].w, session[i].d, session[i].l, session[i].gf, session[i].ga, str, session[i].pts);
+            printf("%-17s %-5d %-5d %-5d %-5d %-5d %-6s %-5d\n", session[i].name, session[i].w, session[i].d, session[i].l, session[i].gf, session[i].ga, str, session[i].pts);
         }
         else
-            printf("%-14s: %3d %5d %5d %6d %5d %6d %5d\n", session[i].name, session[i].w, session[i].d, session[i].l, session[i].gf, session[i].ga, session[i].gd, session[i].pts);
+            printf("%-17s %-5d %-5d %-5d %-5d %-5d %-6d %-5d\n", session[i].name, session[i].w, session[i].d, session[i].l, session[i].gf, session[i].ga, session[i].gd, session[i].pts);
         // else 
         //     printf("%s: %3d %5d %5d %6d %5d %5d %5d\n", session[i].name, session[i].w, session[i].d, session[i].l, session[i].gf, session[i].ga, session[i].gd, session[i].pts);
         // printf("\n");

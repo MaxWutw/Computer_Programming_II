@@ -1,9 +1,10 @@
 #include <stdio.h>
-#include <stdint.h>
 #include <string.h>
-#include <stdlib.h>
+#include <errno.h>
+#define CUSTOMERROR 134 /*cutomize error message*/
 int main() {
-    
+	errno = CUSTOMERROR;
+    perror("Error");
 
 	return 0;
 }

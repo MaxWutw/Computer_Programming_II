@@ -52,8 +52,16 @@ int main(){
     fscanf(stdin, "%s", filename);
     fprintf(stdout, "Time Shift ( -10 ~ 10 ): ");
     fscanf(stdin, "%d", &time_shift);
+    if(time_shift < -10 | time_shift > 10){
+        fprintf(stderr, "The time shift should between -10 and 10\n");
+        return 0;
+    }
     fprintf(stdout, "Speed (0.25 ,0.5 ,0.75 ,1 ,1.25 ,1.5 ,1.75 ,2): ");
     fscanf(stdin, "%f", &speed);
+    if(speed != 0.25 || speed != 0.5 || speed != 0.75 || speed != 1 || speed != 1.25 || speed != 1.5 || speed != 1.75 || speed != 2){
+        fprintf(stderr, "The speed shout be 0.25 ,0.5 ,0.75 ,1 ,1.25 ,1.5 ,1.75 ,2!\n");
+        return 0;
+    }
     if((pFile = fopen(filename, "r")) == NULL){
         fprintf(stderr, "Error: Unable to open file for reading and writing\n");
         return 0;
@@ -90,7 +98,7 @@ int main(){
                         if(str != NULL) str = strtok(NULL, ",");
                         // printf("%s\n", str);
                     }
-                    str+=3;
+                    str += 3;
                     printf("\033[38;2;%d;%d;%dm", red, green, blue);
                     printf("%s", str);
                     printf("\033[0m");
