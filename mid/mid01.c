@@ -3,22 +3,19 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
-void matrix_multiply(int64_t *matrix1, int64_t *matrix2, int32_t *row1, int32_t *col1, int32_t *row2, int32_t *col2) {
-    // 提取行列数
+int32_t matrix_multiply(int64_t *matrix1, int64_t *matrix2, int32_t *row1, int32_t *col1, int32_t *row2, int32_t *col2){
     int32_t rows1 = *row1;
     int32_t cols1 = *col1;
     int32_t rows2 = *row2;
     int32_t cols2 = *col2;
-    // 创建临时矩阵用于存储结果
     int64_t result[rows1 * cols2];
 
-    // 确保能够进行矩阵乘法
+    
     if (cols1 != rows2) {
-        // 矩阵无法相乘，返回
-        return;
+        
+        return -1;
     }
 
-    // 矩阵乘法
     for (int32_t i = 0; i < rows1; i++) {
         for (int32_t j = 0; j < cols2; j++) {
             result[i * cols2 + j] = 0;
@@ -28,17 +25,16 @@ void matrix_multiply(int64_t *matrix1, int64_t *matrix2, int32_t *row1, int32_t 
         }
     }
 
-    // 将结果存回 matrix1
     for (int32_t i = 0; i < rows1; i++) {
         for (int32_t j = 0; j < cols2; j++) {
             matrix1[i * cols2 + j] = result[i * cols2 + j];
         }
     }
 
-    // 更新行列数
     *row1 = rows1;
     *col1 = cols2;
     // printf("\nrow col : %d %d\n", *row1, *col1);
+    return 0;
 }
 
 int main(){
@@ -79,7 +75,13 @@ int main(){
                 }
             }
         }
-        else matrix_multiply(result, matrix, &res_row, &res_col, &row, &col);
+        else{
+            int32_t ret = matrix_multiply(result, matrix, &res_row, &res_col, &row, &col);
+            if(ret == -1){
+                fprintf(stdout, "Multiplication Fails\n");
+                return 0;
+            }
+        }
         // printf("\n========================\n");
         // printf("%d %d\n", res_row, res_col);
         // printf("%d %d\n", row, col);

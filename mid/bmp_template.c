@@ -4,15 +4,31 @@
 #include <stddef.h>
 #include "bmp_func.h"
 int main(){
-    char filename[50], outputname[50];
+    char filename[50], outputname[50], newfile[50];
     FILE *pFile, *pDestination;
     // OPEN file
-    fprintf(stdout, "Please input a BMP file: ");
+    int32_t x, y, w, h;
+    fprintf(stdout, "cover: ");
     fscanf(stdin, "%s", filename);
-    fprintf(stdout, "Please input the output BMP file name: ");
+    fprintf(stdout, "x (in pixel): ");
+    fscanf(stdin, "%d", &x);
+    fprintf(stdout, "y (in pixel): ");
+    fscanf(stdin, "%d", &y);
+    fprintf(stdout, "w (in pixel): ");
+    fscanf(stdin, "%d", &w);
+    fprintf(stdout, "h (in pixel): ");
+    fscanf(stdin, "%d", &h);
+
+    fprintf(stdout, "new: ");
+    fscanf(stdin, "%s", newfile);
+    fprintf(stdout, "output: ");
     fscanf(stdin, "%s", outputname);
 
     if((pFile = fopen(filename, "rb")) == NULL){
+        fprintf(stderr, "Error: Unable to open file for reading and writing\n");
+        return 0;
+    }
+    if((pFile = fopen(newfile, "rb")) == NULL){
         fprintf(stderr, "Error: Unable to open file for reading and writing\n");
         return 0;
     }
