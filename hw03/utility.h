@@ -6,10 +6,8 @@
 #include <string.h>
 #include <getopt.h>
 #include <unistd.h>
-int32_t trace();
-int32_t func();
-int32_t line();
-int32_t code();
-int32_t help();
+int32_t trace(int8_t , int8_t , char *, char*);
+int32_t func(int8_t , int8_t , char *, char*);
+void help();
 
 #endif
