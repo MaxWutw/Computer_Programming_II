@@ -2,7 +2,8 @@ CC = gcc
 
 all:
 	-gcc hw0301.c -o hw0301
-	# -gcc -g hw0302.c -o  hw0302
+	-gcc -c hw0302.c utility.c
+	-gcc hw0302.o utility.o -o hw0302
 	# -gcc -g hw0303.c -o  hw0303
 	# -gcc -g hw0304.c -o hw0304 -lm
 	# -gcc -g hw0305.c -o hw0305
