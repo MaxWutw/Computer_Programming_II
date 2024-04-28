@@ -1,5 +1,18 @@
 #include "utility.h"
 
+void remove_asterisks(char *str){
+    char *src = str;
+    char *dst = str;
+    
+    while (*src) {
+        if (*src != '*') {
+            *dst++ = *src;
+        }
+        src++;
+    }
+    *dst = '\0';
+}
+
 int32_t trace(int8_t line_flag, int8_t code_flag, char *function_name, char* filename){
     int32_t cnt = 0;
     FILE *pFile;
@@ -49,39 +62,54 @@ int32_t func(int8_t line_flag, int8_t code_flag, char *headername, char* filenam
     char tmp1[100], tmp2[100];
     while(!feof(hFile)){
         char buffer[500];
+        int32_t readcnt = 0;
         fgets(buffer, 500, hFile);
-        sscanf(buffer, "%*[^ ] %*[*]%[^(]", tmp1);
-        if(tmp1[0] == '\n') continue;
-        printf("%s\n", tmp1);
+        readcnt = sscanf(buffer, "%*[^ ] %[*a-zA-Z0-9](%*[^(];", tmp1);
+        // printf("%d\n", readcnt);
+        // if(tmp1[0] == '\n' || tmp1[0] == '\0') continue;
+        if(readcnt <= 0) continue;
+        // printf("%s\n", tmp1);
+        // for(char *it = tmp1;*it != '\0';it++){
+        //     if(*it == '*') continue;
+        //     else{
+        //         func_arr[idx] = it;
+        //         break;
+        //     }
+        // }
+        remove_asterisks(tmp1); // 去除 * 字元
+        func_arr[idx] = strdup(tmp1); // 複製處理後的字串到 func_arr
         idx++;
     }
     // for(int32_t i = 0;i < idx;i++){
-    //     while(!feof(pFile)){
-    //         char buffer[500];
-    //         fgets(buffer, 500, pFile);
-    //         if(strstr(buffer, func_arr[i]) != NULL){
-    //             cnt++;
-    //         }
-    //     }
-    //     fseek(pFile, 0, SEEK_SET);
-    //     printf("%s:\n", func_arr[i]);
-    //     printf("  %s (count: %d)\n", filename, cnt);
-    //     int32_t line_cnt = 0;
-    //     while(!feof(pFile)){
-    //         line_cnt++;
-    //         char buffer[500];
-    //         fgets(buffer, 500, pFile);
-    //         buffer[strlen(buffer) - 1] = '\0';
-    //         if(strstr(buffer, func_arr[i]) != NULL){
-    //             if(line_flag || code_flag) printf("    ");
-    //             if(line_flag)
-    //                 printf("line %d:", line_cnt);
-    //             if(code_flag)
-    //                 printf("%s", buffer);
-    //             printf("\n");
-    //         }
-    //     }
+    //     printf("%s\n", func_arr[i]);
     // }
+    for(int32_t i = 0;i < idx;i++){
+        while(!feof(pFile)){
+            char buffer[500];
+            fgets(buffer, 500, pFile);
+            if(strstr(buffer, func_arr[i]) != NULL){
+                cnt++;
+            }
+        }
+        fseek(pFile, 0, SEEK_SET);
+        printf("%s:\n", func_arr[i]);
+        printf("  %s (count: %d)\n", filename, cnt);
+        int32_t line_cnt = 0;
+        while(!feof(pFile)){
+            line_cnt++;
+            char buffer[500];
+            fgets(buffer, 500, pFile);
+            buffer[strlen(buffer) - 1] = '\0';
+            if(strstr(buffer, func_arr[i]) != NULL){
+                if(line_flag || code_flag) printf("    ");
+                if(line_flag)
+                    printf("line %d:", line_cnt);
+                if(code_flag)
+                    printf("%s", buffer);
+                if(line_flag || code_flag) printf("\n");
+            }
+        }
+    }
 }
 
 void help(){

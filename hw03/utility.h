@@ -9,5 +9,6 @@
 int32_t trace(int8_t , int8_t , char *, char*);
 int32_t func(int8_t , int8_t , char *, char*);
 void help();
+void remove_asterisks(char *str);
 
 #endif
