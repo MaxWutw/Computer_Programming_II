@@ -144,10 +144,55 @@ int main(int argc, char *argv[]){
     }
     else if(ex){
         fwrite(&header, sizeof(header), 1, pBinary);
+        uint8_t mem = 0;
+        int32_t idx = 0, remain = 0, shift = bit;
         for(int32_t i = 0;i < header.height;i++){
             for(int32_t j = 0;j < header.width;j++){
                 for(int32_t k = 0;k < 3;k++){
-                    fwrite()
+                    idx += bit;
+                    if(idx > 8){
+                        remain = (idx - 8);
+                        idx = 8;
+                        shift = bit - remain;
+                    }
+                    int8_t mask = (1 << shift) - 1;
+                    if(k == 0){
+                        int8_t get_last = (pixel + i * header.width + j)->b & mask;
+                        get_last <<= (8 - idx);
+                        mem |= get_last;
+                    }
+                    else if(k == 1){
+                        int8_t get_last = (pixel + i * header.width + j)->g & mask;
+                        get_last <<= (8 - idx);
+                        mem |= get_last;
+                    }
+                    else if(k == 2){
+                        int8_t get_last = (pixel + i * header.width + j)->r & mask;
+                        get_last <<= (8 - idx);
+                        mem |= get_last;
+                    }
+                    if(idx == 8){
+                        fwrite(&mem, 1, 1, pBinary);
+                    }
+                    if(remain != 0){
+                        mem = 0;
+                        mask = (1 << remain) - 1;
+                        if(k == 0){
+                            int8_t get_last = (pixel + i * header.width + j)->b & mask;
+                            get_last <<= (8 - idx);
+                            mem |= get_last;
+                        }
+                        else if(k == 1){
+                            int8_t get_last = (pixel + i * header.width + j)->g & mask;
+                            get_last <<= (8 - idx);
+                            mem |= get_last;
+                        }
+                        else if(k == 2){
+                            int8_t get_last = (pixel + i * header.width + j)->r & mask;
+                            get_last <<= (8 - idx);
+                            mem |= get_last;
+                        }
+                    }
                 }
             }
         }
