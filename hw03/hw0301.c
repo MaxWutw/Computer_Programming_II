@@ -5,7 +5,6 @@
 #include <ctype.h>
 #include <string.h>
 int32_t str2int(char *str){
-
     char tmp[500];
     int32_t idx = 0;
     for(const char *it = str;*it != ',';it++){
@@ -20,6 +19,7 @@ int32_t str2int(char *str){
     return res;
 }
 int main(){
+    freopen("out", "w", stdout);
     FILE *pFile;
     if((pFile = fopen("bible.txt", "r")) == NULL){
         fprintf(stderr, "File could not be opened!\n");
@@ -33,21 +33,28 @@ int main(){
         search[i] = tolower(search[i]);
     }
     int32_t chapter = 0, verse = 0;
-    char term[50];
+    char term[50], ver[50];
     char *token;
     int32_t cnt = 1;
     while(!feof(pFile)){
         char buffer[500];
         fgets(buffer, 500, pFile);
-        token = strtok(buffer, ":");
-        token = strtok(NULL, ":");
-        chapter = str2int(token);
-        // printf("%d\n", chapter);
-        token = strtok(NULL, ":");
-        verse = str2int(token);
-        // printf("%d %d\n", chapter, verse);
+        printf("%s", buffer);
+
+
+
+        // token = strtok(buffer, ":");
         // token = strtok(NULL, ":");
-        token = strtok(NULL, "\"");
+        // chapter = str2int(token);
+        // // printf("%d\n", chapter);
+        // token = strtok(NULL, ":");
+        // verse = str2int(token);
+        // // printf("%d %d\n", chapter, verse);
+        // // token = strtok(NULL, ":");
+        // token = strtok(NULL, "\"");
+
+
+        sscanf("%*s:%d,%*s:%d,%*s:\"%s\",%*s,%*s:\"%s\",%*s", &chapter, &verse, term, ver);
         // printf("%s\n", token);
         // break;
         int8_t correct = 1;
@@ -75,7 +82,7 @@ int main(){
                 printf("%d. %s %d:%d %s\n", cnt++, token, chapter, verse, tmp);
             }
         }
-        break;
+        // break;
     }
 
     return 0;
