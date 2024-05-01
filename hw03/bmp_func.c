@@ -2,6 +2,7 @@
 
 int32_t parseheader(FILE *pFile, sBmpHeader *header){
     fread(header, sizeof(*header), 1, pFile);
+    return 1;
 }
 
 int32_t readbmp(FILE *pFile, sPixel *pixel, sBmpHeader *header){
@@ -13,6 +14,7 @@ int32_t readbmp(FILE *pFile, sPixel *pixel, sBmpHeader *header){
         }
         fread(temp, padding_sz, 1, pFile);
     }
+    return 1;
 }
 
 int32_t writebmp(FILE *pDestination, sPixel *pixel, sBmpHeader *header){
@@ -26,6 +28,7 @@ int32_t writebmp(FILE *pDestination, sPixel *pixel, sBmpHeader *header){
         for(int32_t k = 0;k < ((4 - ((header->width * color) % 4)) % 4);k++)
             fputc(0, pDestination);
     }
+    return 1;
 }
 
 void print_bmp_header(sBmpHeader *pHeader){

@@ -45,6 +45,7 @@ int32_t trace(int8_t line_flag, int8_t code_flag, char *function_name, char* fil
             printf("\n");
         }
     }
+    return 1;
 }
 
 int32_t func(int8_t line_flag, int8_t code_flag, char *headername, char* filename){
@@ -110,6 +111,7 @@ int32_t func(int8_t line_flag, int8_t code_flag, char *headername, char* filenam
             }
         }
     }
+    return 1;
 }
 
 void help(){
