@@ -10,6 +10,7 @@
         "vector": "c",
         "string": "c",
         "string_view": "c",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "bmp_func.h": "c"
     }
 }

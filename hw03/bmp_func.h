@@ -31,8 +31,8 @@ typedef struct _sBmpHeader sBmpHeader;
 typedef struct _sPixel sPixel;
 
 int32_t parseheader(FILE *pFile, sBmpHeader *);
-int32_t readbmp(FILE *pFile, sPixel *, sBmpHeader *);
-int32_t writebmp(FILE *pDestination, sPixel *pixel, sBmpHeader *header);
+int32_t readbmp(FILE *pFile, uint8_t *, sBmpHeader *);
+int32_t writebmp(FILE *pDestination, uint8_t *pixel, sBmpHeader *header);
 void print_bmp_header(sBmpHeader *);
 
 #endif

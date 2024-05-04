@@ -37,12 +37,12 @@ int main() {
     // fwrite(&data, 1, 1, pBinary);
 
     // // 移動文件指標到開頭
-    fseek(pBinary, 0, SEEK_SET);
+    // fseek(pBinary, 0, SEEK_SET);
 
     // 從檔案中讀取資料到 rda
     fread(&rda, 1, 1, pBinary);
 
-    // 輸出 rda 的值
+    // // 輸出 rda 的值
     printf("%d\n", rda);
 
     // 關閉檔案

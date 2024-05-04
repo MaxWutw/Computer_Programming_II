@@ -5,25 +5,25 @@ int32_t parseheader(FILE *pFile, sBmpHeader *header){
     return 1;
 }
 
-int32_t readbmp(FILE *pFile, sPixel *pixel, sBmpHeader *header){
+int32_t readbmp(FILE *pFile, uint8_t *pixel, sBmpHeader *header){
     int32_t padding_sz = (((24 * header->width + 31) / 32) * 4) - (3 * header->width);
     int8_t temp[4];
     for(int32_t i = 0;i < header->height;i++){
-        for(int32_t j = 0;j < header->width;j++){
-            fread(pixel + (i * header->width) + j, sizeof(sPixel), 1, pFile);
+        for(int32_t j = 0;j < header->width * 3;j++){
+            fread(pixel + (i * header->width * 3) + j, sizeof(uint8_t), 1, pFile);
         }
         fread(temp, padding_sz, 1, pFile);
     }
     return 1;
 }
 
-int32_t writebmp(FILE *pDestination, sPixel *pixel, sBmpHeader *header){
+int32_t writebmp(FILE *pDestination, uint8_t *pixel, sBmpHeader *header){
     // printf("%d %d\n", header->height, header->width);
     int32_t color = (header->bpp / 8);
     for(int32_t i = 0;i < header->height;i++){
-        for(int32_t j = 0;j < header->width;j++){
+        for(int32_t j = 0;j < header->width * 3;j++){
             // printf("%u ",(pixel + (i * header->width + j))->r);
-            fwrite(pixel + (i * header->width + j), sizeof(sPixel), 1, pDestination);
+            fwrite(pixel + (i * header->width * 3 + j), sizeof(uint8_t), 1, pDestination);
         }
         for(int32_t k = 0;k < ((4 - ((header->width * color) % 4)) % 4);k++)
             fputc(0, pDestination);
