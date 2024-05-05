@@ -33,56 +33,42 @@ int main(){
         search[i] = tolower(search[i]);
     }
     int32_t chapter = 0, verse = 0;
-    char term[50], ver[50];
+    char term[512], ver[50];
     char *token;
     int32_t cnt = 1;
     while(!feof(pFile)){
-        char buffer[500];
-        fgets(buffer, 500, pFile);
-        printf("%s", buffer);
-
-
-
-        // token = strtok(buffer, ":");
-        // token = strtok(NULL, ":");
-        // chapter = str2int(token);
-        // // printf("%d\n", chapter);
-        // token = strtok(NULL, ":");
-        // verse = str2int(token);
-        // // printf("%d %d\n", chapter, verse);
-        // // token = strtok(NULL, ":");
-        // token = strtok(NULL, "\"");
-
-
-        sscanf("%*s:%d,%*s:%d,%*s:\"%s\",%*s,%*s:\"%s\",%*s", &chapter, &verse, term, ver);
-        // printf("%s\n", token);
-        // break;
-        int8_t correct = 1;
-        // printf("%s\n", search);
-        // printf("%s\n", token);
-        for(int32_t i = 0;i < strlen(token);i++){
-            for(int32_t j = 0;j < search_len - 1;j++){
-                if(search[j] == tolower(token[i + j])){
-                    continue;
-                }
-                else{
-                    correct = 0;
-                    break;
-                }
-            }
-            if(correct){
-                char tmp[500];
-                for(int32_t i = 0;i < strlen(token);i++) tmp[i] = token[i];
-                tmp[strlen(token)] = '\0';
-                token = strtok(NULL, ":");
-                token = strtok(NULL, ":");
-                token = strtok(NULL, "\"");
-                printf("%s\n", token);
-                printf("Found %d time(s)\n", cnt);
-                printf("%d. %s %d:%d %s\n", cnt++, token, chapter, verse, tmp);
-            }
+        char buffer[1024], tmp[1000];
+        fgets(buffer, 1024, pFile);
+        sscanf(buffer, "%*[^:]:%d,%*[^:]:%d,%*[^:]:\"%[^\"]\"%*[^:]:%*[^:]:\"%[^\"]\"%*s", &chapter, &verse, term, ver);
+        search[search_len - 1] = '\0';
+        char tmp_term[512];
+        for(int32_t i = 0;i < strlen(term);i++){
+            tmp_term[i] = tolower(term[i]);
         }
-        // break;
+        tmp_term[strlen(term)] = '\0';
+        if(strstr(tmp_term, search) != NULL){
+            cnt++;
+            // printf("Found %d time(s)\n", cnt);
+            // printf("%d. %s %d:%d %s\n", cnt++, term, chapter, verse, ver);
+        }
+    }
+    fseek(pFile, 0, SEEK_SET);
+    printf("Found %d time(s)\n", cnt - 1);
+    int32_t idx = 1;
+    while(!feof(pFile)){
+        char buffer[1024], tmp[1000];
+        fgets(buffer, 1024, pFile);
+        sscanf(buffer, "%*[^:]:%d,%*[^:]:%d,%*[^:]:\"%[^\"]\"%*[^:]:%*[^:]:\"%[^\"]\"%*s", &chapter, &verse, term, ver);
+        search[search_len - 1] = '\0';
+        char tmp_term[512];
+        for(int32_t i = 0;i < strlen(term);i++){
+            tmp_term[i] = tolower(term[i]);
+        }
+        tmp_term[strlen(term)] = '\0';
+        if(strstr(tmp_term, search) != NULL){
+            // printf("%d. %s %d:%d %s\n", idx++, term, chapter, verse, ver);
+            printf("%d. %s %d:%d %s\n", idx++, ver, chapter, verse, term);
+        }
     }
 
     return 0;

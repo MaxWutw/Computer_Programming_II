@@ -20,7 +20,6 @@ int32_t str2int(char *str){
 }
 int main(int argc, char *argv[]){
     FILE *pFile, *pBinary;
-
     int32_t c;
     int8_t wr = 0, ex = 0, bit = 1;
     while((c = getopt_long(argc, argv, "web:", long_options, NULL)) != -1){
@@ -52,20 +51,33 @@ int main(int argc, char *argv[]){
     char *newfile = argv[optind + 1];
     FILE *pDestination;
     printf("%s\n", newfile);
-    if((pFile = fopen(filename, "r+b")) == NULL){
-        fprintf(stderr, "Error: Unable to open file for reading or writing\n");
-        return 0;
-    }
-    if((pBinary = fopen(newfile, "r+")) == NULL){
-        fprintf(stderr, "Error: Unable to open file for reading or writing\n");
-        return 0;
-    }
-    if(strcmp(filename, "des.bmp") != 0){
+    printf("%s\n", filename);
+    if(wr){
+        if((pFile = fopen(filename, "rb")) == NULL){
+            fprintf(stderr, "Error: Unable to open file for reading or writing\n");
+            return 0;
+        }
+        if((pBinary = fopen(newfile, "rb")) == NULL){
+            fprintf(stderr, "Error: Unable to open file for reading or writing\n");
+            return 0;
+        }
         if((pDestination = fopen("des.bmp", "wb")) == NULL){
             fprintf(stderr, "Error: Unable to open file for reading or writing\n");
             return 0;
         }
     }
+    else if(ex){
+        if((pFile = fopen(filename, "rb")) == NULL){
+            fprintf(stderr, "Error: Unable to open file for reading or writing\n");
+            return 0;
+        }
+        if((pBinary = fopen(newfile, "wb")) == NULL){
+            fprintf(stderr, "Error: Unable to open file for reading or writing\n");
+            return 0;
+        }
+    }
+
+    
     // OPEN end
 
     // READ data
@@ -81,20 +93,22 @@ int main(int argc, char *argv[]){
         int32_t binary_byte = ftell(pBinary);
         printf("%d\n", binary_byte);
         printf("%d\n", bit);
+        // printf("bina0ry: %d\n save: %d", (binary_byte * 8), (header.width * header.height * 3 * bit));
         if((binary_byte * 8) > (header.width * header.height * 3 * bit)){
             fprintf(stderr, "Error: The secret data is larger than cover_bmp!\n");
             return 0;
         }
         header.reserve = binary_byte;
+        printf("reserve: %d\n", header.reserve);
         fseek(pBinary, 0, SEEK_SET);
         uint8_t *newPixels = (uint8_t *)malloc(header.height * header.width * sizeof(uint8_t) * 3);
         uint8_t mem = 0;
         int32_t idx = 0, remain = 0, shift = bit;
         fread(&mem, 1, 1, pBinary);
         int32_t row = 0, col = 0;
+        int32_t dd = 0;
         while(!feof(pBinary)){
-            fread(&mem, 1, 1, pBinary);
-            if(row > (header.width * 3)){
+            if(row >= (header.width * 3)){
                 row = 0;
                 col++;
             }
@@ -109,24 +123,31 @@ int main(int argc, char *argv[]){
             uint8_t tmp = ((mem & mask2) >> (8 - idx));
             *(pixel + (col * header.width * 3) + row) &= ~mask;
             *(newPixels + (col * header.width * 3) + row) = (*(pixel + (col * header.width * 3) + row) | tmp);
+            // printf("pixel: %d\n", *(newPixels + (col * header.width * 3) + row));
             if(remain != 0){
                 // printf("remain\n");
+                // printf("mem: %d\n", mem);
                 row++;
                 fread(&mem, 1, 1, pBinary);
                 idx = remain;
                 shift = bit;
                 mask = (1 << remain) - 1, start = (8 - idx);
                 mask2 = (mask << start);
-                tmp = ((mem & mask2) >> (8 - idx));
-                remain = 0;
-                *(pixel + (col * header.width * 3) + row) &= ~mask;
+                tmp = (((mem & mask2) >> (8 - idx)) << (bit - remain));
+                *(pixel + (col * header.width * 3) + row) &= ~(mask << (bit - remain));
                 *(newPixels + (col * header.width * 3) + row) = (*(pixel + (col * header.width * 3) + row) | tmp);
+                remain = 0;
+                // if(row >= 5) break;
             }
             else if(idx == 8){
                 // printf("idx\n");
+                // printf("mem: %d\n", mem);
                 row++;
                 fread(&mem, 1, 1, pBinary);
+                idx = 0;
+                // if(row >= 5) break;
             }
+            else row++;
         }
         printf("col: %d, row: %d\n", col, row);
         int8_t judge = 1;
@@ -139,77 +160,61 @@ int main(int argc, char *argv[]){
         fwrite(&header, sizeof(header), 1, pDestination);
         writebmp(pDestination, newPixels, &header);
     }
-    // else if(ex){
-    //     // fwrite(&header, sizeof(header), 1, pBinary);
-    //     uint8_t mem = 0;
-    //     int32_t idx = 0, remain = 0, shift = bit;
-    //     for(int32_t i = 0;i < header.height;i++){
-    //         for(int32_t j = 0;j < header.width;j++){
-    //             for(int32_t k = 0;k < 3;k++){
-    //                 idx += bit;
-    //                 if(idx > 8){
-    //                     remain = (idx - 8);
-    //                     idx = 8;
-    //                     shift = bit - remain;
-    //                 }
-    //                 int8_t mask = (1 << shift) - 1;
-    //                 if(k == 0){
-    //                     int8_t get_last = (pixel + i * header.width + j)->b & mask;
-    //                     get_last <<= (8 - idx);
-    //                     mem |= get_last;
-    //                 }
-    //                 else if(k == 1){
-    //                     int8_t get_last = (pixel + i * header.width + j)->g & mask;
-    //                     get_last <<= (8 - idx);
-    //                     mem |= get_last;
-    //                 }
-    //                 else if(k == 2){
-    //                     int8_t get_last = (pixel + i * header.width + j)->r & mask;
-    //                     get_last <<= (8 - idx);
-    //                     mem |= get_last;
-    //                 }
-    //                 if(idx == 8){
-    //                     idx = 0;
-    //                     fwrite(&mem, 1, 1, pBinary);
-    //                 }
-    //                 if(remain != 0){
-    //                     mem = 0;
-    //                     idx = remain;
-    //                     mask = ((1 << remain) - 1) << (bit - remain);
-    //                     if(k == 0){
-    //                         int8_t get_last = (pixel + i * header.width + j)->b & mask;
-    //                         get_last >>= (bit-remain);
-    //                         get_last <<= (8 - idx);
-    //                         mem |= get_last;
-    //                     }
-    //                     else if(k == 1){
-    //                         int8_t get_last = (pixel + i * header.width + j)->g & mask;
-    //                         get_last >>= (bit-remain);
-    //                         get_last <<= (8 - idx);
-    //                         mem |= get_last;
-    //                     }
-    //                     else if(k == 2){
-    //                         int8_t get_last = (pixel + i * header.width + j)->r & mask;
-    //                         get_last >>= (bit-remain);
-    //                         get_last <<= (8 - idx);
-    //                         mem |= get_last;
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
-    // int8_t data = 4;
-    // int8_t rda = 0;
-    // fread(&rda, 1, 1, pBinary);
-    // fwrite(&data, 1, 1, pBinary);
-    // printf("%u\n", rda);
+    else if(ex){
+        // fwrite(&header, sizeof(header), 1, pBinary);
+        uint8_t mem = 0;
+        int32_t idx = 0, remain = 0, shift = bit;
+        int32_t cur_byte = 0;
+        printf("extract size: %d\n", header.reserve);
+        int8_t debug = 0;
+        for(int32_t i = 0;i < header.height;i++){
+            for(int32_t j = 0;j < header.width * 3;j++){
+                if(cur_byte >= header.reserve) break;
+                idx += bit;
+                if(idx > 8){
+                    remain = (idx - 8);
+                    idx = 8;
+                    shift = bit - remain;
+                }
+                int8_t mask = (1 << shift) - 1;
+                int8_t get_last = *(pixel + (i * header.width * 3) + j) & mask;
+                get_last <<= (8 - idx);
+                // printf("tmp: %d\n", *(pixel + (i * header.width * 3) + j));
+                mem |= get_last;
+                if(idx == 8){
+                    // printf("mem: %d\n", mem);
+                    idx = 0;
+                    fwrite(&mem, 1, 1, pBinary);
+                    cur_byte++;
+                    mem = 0;
+                    // debug = 1;
+                    // break;
+                }
+                if(remain != 0){
+                    mem = 0;
+                    idx = remain;
+                    mask = ((1 << remain) - 1) << (bit - remain);
+                    int8_t get_last = *(pixel + (i * header.width * 3) + j) & mask;
+                    get_last >>= (bit - remain);
+                    get_last <<= (8 - idx);
+                    mem |= get_last;
+                    shift = bit;
+                    remain = 0;
+                    // debug = 1;
+                    // break;
+                }
+            }
+            // if(debug) break;
+        }
+
+        printf("total: %d\n", cur_byte);
+    }
     // PROCESS end
 
     // CLOSE
     fclose(pFile);
     fclose(pBinary);
-    fclose(pDestination);
+    if(wr) fclose(pDestination);
     // FINISH
 
     return 0;
