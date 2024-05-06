@@ -167,14 +167,25 @@ int main(int argc, char *argv[]){
         int32_t cur_byte = 0;
         printf("extract size: %d\n", header.reserve);
         int8_t debug = 0;
-        for(int32_t i = 0;i < header.height;i++){
-            for(int32_t j = 0;j < header.width * 3;j++){
+        int32_t cur = 0;
+        int8_t judge = 0;
+        for(int32_t i = 0;i < header.height;){
+            for(int32_t j = 0;j < header.width * 3;){
                 if(cur_byte >= header.reserve) break;
                 idx += bit;
+                cur += bit;
                 if(idx > 8){
                     remain = (idx - 8);
                     idx = 8;
                     shift = bit - remain;
+                }
+                if(cur > bit){
+                    remain += (cur - bit);
+                    
+                }
+                else if(cur == bit){
+                    cur = 0;
+                    j++;
                 }
                 int8_t mask = (1 << shift) - 1;
                 int8_t get_last = *(pixel + (i * header.width * 3) + j) & mask;
