@@ -6,8 +6,10 @@ all:
 	-gcc hw0302.o utility.o -o hw0302
 	-gcc -c hw0303.c bmp_func.c
 	-gcc -g hw0303.o bmp_func.o -o hw0303
+	-gcc -c hw0304.c util.c
+	-gcc -g hw0304.o util.o -o hw0304
 	# -gcc -g hw0304.c -o hw0304 -lm
-	-gcc -g hw0305.c -o hw0305
+	# -gcc -g hw0305.c -o hw0305
 
 clean:
 	rm -f hw030{1..5} hw030{1..5}.o *.o

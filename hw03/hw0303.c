@@ -167,24 +167,30 @@ int main(int argc, char *argv[]){
         int32_t cur_byte = 0;
         printf("extract size: %d\n", header.reserve);
         int8_t debug = 0;
-        int32_t cur = 0;
+        int32_t cur = bit;
         int8_t judge = 0;
-        for(int32_t i = 0;i < header.height;){
+        int32_t last = 0;
+        for(int32_t i = 0;i < header.height;i++){
             for(int32_t j = 0;j < header.width * 3;){
                 if(cur_byte >= header.reserve) break;
                 idx += bit;
-                cur += bit;
+                if(cur - bit < 0){
+                    idx -= (bit - cur);
+                    shift = cur;
+                    cur = bit;
+                }
+                // cur += bit;
                 if(idx > 8){
                     remain = (idx - 8);
                     idx = 8;
                     shift = bit - remain;
                 }
-                if(cur > bit){
+                if(remain != 0){
                     remain += (cur - bit);
-                    
+                    cur += remain;
                 }
-                else if(cur == bit){
-                    cur = 0;
+                else if(cur == 0){
+                    cur = bit;
                     j++;
                 }
                 int8_t mask = (1 << shift) - 1;
