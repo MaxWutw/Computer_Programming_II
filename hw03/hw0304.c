@@ -44,6 +44,7 @@ void print_person(sPerson *per){
     printf("x: %hhu, y: %hhu\n", per->x, per->y);
     printf("HP: %hu, MAXHP: %hu\n", per->hp, per->hpmax);
     printf("MP: %hu, MAXMP: %hu\n", per->mp, per->mpmax);
+    printf("name: %hu\n", per->name);
     printf("MT: %hu, DF: %hu, MV: %hhu, EX: %hhu, DX: %hu\n", per->mt, per->df, per->mv, per->ex, per->dx);
 }
 
@@ -65,7 +66,6 @@ int main(int argc, char *argv[]){
         return 0;
     }
     uint8_t *pData = malloc(GAME_SIZE);
-    sPerson person;
     uint16_t hp, hpmax;
     lseek(fd, addr_start, SEEK_SET);
     read(fd, pData, GAME_SIZE);
@@ -87,7 +87,69 @@ int main(int argc, char *argv[]){
         // printf("0x%x\n", pData + i);
         // break;
     }
+    fprintf(stdout, "1) HP\n2) MP\n3) MT\n4) DF\n5) MV\n6) EX\n7) DX\n");
+    fprintf(stdout, "Please select the content you want to modify: ");
+    int32_t option = 1;
+    fscanf(stdin, "%d", &option);
+    sPerson person;
+    memcpy(&person, (pData + start[0]), sizeof(sPerson));
+    print_person(&person);
+    // person
+    int32_t val;
+    if(option == 1){
+        fprintf(stdout, "What value do you want to change HP to: ");
+        fscanf(stdin, "%d", &val);
+        char hexString[10];
+        uint16_t hex;
+        hex = val;
+        // sprintf(hexString, "%x", val);
+        // printf("%s\n", hexString);
+        // sscanf(hexString, "%hx", &hex);
+        // printf("hex: %hu\n", hex);
+        person.hp = hex;
+        person.hpmax = hex;
+    }
+    else if(option == 2){
+        fprintf(stdout, "What value do you want to change MP to: ");
+        fscanf(stdin, "%d", &val);
+        // person.mp = val;
+        person.mp = (uint16_t)150;
+        person.mpmax = (uint16_t)300;
+    }
+    else if(option == 3){
+        fprintf(stdout, "What value do you want to change MT to: ");
+        fscanf(stdin, "%d", &val);
+        person.mt = val;
+    }
+    else if(option == 4){
+        fprintf(stdout, "What value do you want to change DF to: ");
+        fscanf(stdin, "%d", &val);
+        person.df = val;
+    }
+    else if(option == 5){
+        fprintf(stdout, "What value do you want to change MV to: ");
+        fscanf(stdin, "%d", &val);
+        person.mv = val;
+    }
+    else if(option == 6){
+        fprintf(stdout, "What value do you want to change EX to: ");
+        fscanf(stdin, "%d", &val);
+        person.ex = val;
+    }
+    else if(option == 7){
+        fprintf(stdout, "What value do you want to change DX to: ");
+        fscanf(stdin, "%d", &val);
+        person.dx = val;
+    }
+    lseek(fd, addr_start + start[0], SEEK_SET);
+    write(fd, &person, 80);
+    lseek(fd, addr_start + start[0], SEEK_SET);
+    printf("\n=========================\n");
+    print_person(&person);
+    fsync(fd);
+
     // mmap(NULL, getFDsize(fd), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    free(pData);
     close(fd);
 
     return 0;
