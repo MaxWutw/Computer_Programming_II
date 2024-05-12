@@ -19,7 +19,7 @@ int32_t str2int(char *str){
     return res;
 }
 int main(){
-    freopen("out", "w", stdout);
+    // freopen("out", "w", stdout);
     FILE *pFile;
     if((pFile = fopen("bible.txt", "r")) == NULL){
         fprintf(stderr, "File could not be opened!\n");

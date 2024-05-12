@@ -88,6 +88,16 @@ int32_t func(int8_t line_flag, int8_t code_flag, char *headername, char* filenam
         while(!feof(pFile)){
             char buffer[500];
             fgets(buffer, 500, pFile);
+            int8_t first = 1, failed = 0;
+            for(int32_t i = 0;i < strlen(buffer);i++){
+                if(first && buffer[i] == '/'){
+                    failed = 1;
+                    break;
+                }
+                else if(buffer[i] == ' ') continue;
+                else first = 0;
+            }
+            if(failed) continue;
             if(strstr(buffer, func_arr[i]) != NULL){
                 cnt++;
             }
@@ -101,6 +111,16 @@ int32_t func(int8_t line_flag, int8_t code_flag, char *headername, char* filenam
             char buffer[500];
             fgets(buffer, 500, pFile);
             buffer[strlen(buffer) - 1] = '\0';
+            int8_t first = 1, failed = 0;
+            for(int32_t i = 0;i < strlen(buffer);i++){
+                if(first && buffer[i] == '/'){
+                    failed = 1;
+                    break;
+                }
+                else if(buffer[i] == ' ') continue;
+                else first = 0;
+            }
+            if(failed) continue;
             if(strstr(buffer, func_arr[i]) != NULL){
                 if(line_flag || code_flag) printf("    ");
                 if(line_flag)
