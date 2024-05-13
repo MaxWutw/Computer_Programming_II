@@ -61,10 +61,10 @@ int main(int argc, char *argv[]){
             fprintf(stderr, "Error: Unable to open file for reading or writing\n");
             return 0;
         }
-        if((pDestination = fopen("des.bmp", "wb")) == NULL){
-            fprintf(stderr, "Error: Unable to open file for reading or writing\n");
-            return 0;
-        }
+        // if((pDestination = fopen("des.bmp", "wb")) == NULL){
+        //     fprintf(stderr, "Error: Unable to open file for reading or writing\n");
+        //     return 0;
+        // }
     }
     else if(ex){
         if((pFile = fopen(filename, "rb")) == NULL){
@@ -157,6 +157,11 @@ int main(int argc, char *argv[]){
                 *(newPixels + (i * header.width * 3) + j) = (*(pixel + (i * header.width * 3) + j));
             }
         }
+        fclose(pFile);
+        if((pDestination = fopen(filename, "wb")) == NULL){
+            fprintf(stderr, "Error: Unable to open file for reading or writing\n");
+            return 0;
+        }
         fwrite(&header, sizeof(header), 1, pDestination);
         writebmp(pDestination, newPixels, &header);
     }
@@ -171,28 +176,28 @@ int main(int argc, char *argv[]){
         int8_t judge = 0;
         int32_t last = 0;
         for(int32_t i = 0;i < header.height;i++){
-            for(int32_t j = 0;j < header.width * 3;){
+            for(int32_t j = 0;j < header.width * 3;j++){
                 if(cur_byte >= header.reserve) break;
                 idx += bit;
-                if(cur - bit < 0){
-                    idx -= (bit - cur);
-                    shift = cur;
-                    cur = bit;
-                }
+                // if(cur - bit < 0){
+                //     idx -= (bit - cur);
+                //     shift = cur;
+                //     cur = bit;
+                // }
                 // cur += bit;
                 if(idx > 8){
                     remain = (idx - 8);
                     idx = 8;
                     shift = bit - remain;
                 }
-                if(remain != 0){
-                    remain += (cur - bit);
-                    cur += remain;
-                }
-                else if(cur == 0){
-                    cur = bit;
-                    j++;
-                }
+                // if(remain != 0){
+                //     remain += (cur - bit);
+                //     cur += remain;
+                // }
+                // else if(cur == 0){
+                //     cur = bit;
+                //     j++;
+                // }
                 int8_t mask = (1 << shift) - 1;
                 int8_t get_last = *(pixel + (i * header.width * 3) + j) & mask;
                 get_last <<= (8 - idx);
@@ -229,7 +234,7 @@ int main(int argc, char *argv[]){
     // PROCESS end
 
     // CLOSE
-    fclose(pFile);
+    if(!wr) fclose(pFile);
     fclose(pBinary);
     if(wr) fclose(pDestination);
     // FINISH

@@ -253,9 +253,9 @@ void print_person(sPerson *per){
     printf("MP: %hu, MAXMP: %hu\n", per->mp, per->mpmax);
     printf("name: %hu\n", per->name);
     printf("MT: %hu, DF: %hu, MV: %hhu, EX: %hhu, DX: %hu\n", per->mt, per->df, per->mv, per->ex, per->dx);
-    for(int32_t i = 0;i < 16;i++){
-        printf("item: %hhu\n", per->item[i]);
-    }
+    // for(int32_t i = 0;i < 16;i++){
+    //     printf("item: %hhu\n", per->item[i]);
+    // }
 }
 
 int main(int argc, char *argv[]){
@@ -275,6 +275,7 @@ int main(int argc, char *argv[]){
         fprintf(stderr, "ERROR: Failed to open the file\n");
         return 0;
     }
+    system("clear");
     uint8_t *pData = malloc(GAME_SIZE);
     uint16_t hp, hpmax, mp, mpmax;
     lseek(fd, addr_start, SEEK_SET);
@@ -307,119 +308,117 @@ int main(int argc, char *argv[]){
         fprintf(stdout, "Could not find a character matching the attributes you want to modify. Please ensure you have entered the correct character attributes you wish to modify.\n");
         return 0;
     }
+    sPerson person;
+    // memcpy(&person, (pData + start[0]), sizeof(sPerson));
+    for(int32_t i = 0;i < cnt;i++){
+        memcpy(&person, (pData + start[i]), sizeof(sPerson));
+        printf("%d)\n", i + 1);
+        print_person(&person);
+        printf("==============================\n");
+    }
+    int32_t modify_option = 1;
+    printf("Please select the character information you want to modify: ");
+    fscanf(stdin, "%d", &modify_option);
+    modify_option--;
+    system("clear");
     fprintf(stdout, "1) HP\n2) MP\n3) MT\n4) DF\n5) MV\n6) EX\n7) DX\n8) cancel\n");
     fprintf(stdout, "Please select the abilities you want to modify: ");
     int32_t option = 1;
     fscanf(stdin, "%d", &option);
-    sPerson person;
-    memcpy(&person, (pData + start[0]), sizeof(sPerson));
-    for(int32_t i = 0;i < cnt;i++){
-        memcpy(&person, (pData + start[i]), sizeof(sPerson));
-        // print_person(&person);
-        // person
-        int32_t val;
-        if(option == 1){
-            if(i == 0){
-                fprintf(stdout, "What value do you want to change HP to: ");
-                fscanf(stdin, "%d", &val);
-            }
-            uint16_t hex;
-            hex = val;
-            person.hp = hex;
-            person.hpmax = hex;
-        }
-        else if(option == 2){
-            if(i == 0){
-                fprintf(stdout, "What value do you want to change MP to: ");
-                fscanf(stdin, "%d", &val);
-            }
-            person.mp = (uint16_t)val;
-            person.mpmax = (uint16_t)val;
-        }
-        else if(option == 3){
-            if(i == 0){
-                fprintf(stdout, "What value do you want to change MT to: ");
-                fscanf(stdin, "%d", &val);
-            }
-            person.mt = (uint16_t)val;
-        }
-        else if(option == 4){
-            if(i == 0){
-                fprintf(stdout, "What value do you want to change DF to: ");
-                fscanf(stdin, "%d", &val);
-            }
-            person.df = (uint16_t)val;
-        }
-        else if(option == 5){
-            if(i == 0){
-                fprintf(stdout, "What value do you want to change MV to: ");
-                fscanf(stdin, "%d", &val);
-            }
-            person.mv = (uint16_t)val;
-        }
-        else if(option == 6){
-            if(i == 0){
-                fprintf(stdout, "What value do you want to change EX to: ");
-                fscanf(stdin, "%d", &val);
-            }
-            person.ex = (uint16_t)val;
-        }
-        else if(option == 7){
-            if(i == 0){
-                fprintf(stdout, "What value do you want to change DX to: ");
-                fscanf(stdin, "%d", &val);
-            }
-            person.dx = (uint16_t)val;
-        }
-        else break;
-        lseek(fd, addr_start + start[i], SEEK_SET);
-        write(fd, &person, 80);
-        lseek(fd, addr_start + start[i], SEEK_SET);
-        // printf("\n=========================\n");
-        // print_person(&person);
-        fsync(fd);
+    // for(int32_t i = 0;i < cnt;i++){
+    memcpy(&person, (pData + start[modify_option]), sizeof(sPerson));
+    // print_person(&person);
+    int32_t val;
+    if(option == 1){
+        fprintf(stdout, "What value do you want to change HP to: ");
+        fscanf(stdin, "%d", &val);
+        uint16_t hex;
+        hex = val;
+        person.hp = hex;
+        person.hpmax = hex;
     }
+    else if(option == 2){
+        fprintf(stdout, "What value do you want to change MP to: ");
+        fscanf(stdin, "%d", &val);
+        person.mp = (uint16_t)val;
+        person.mpmax = (uint16_t)val;
+    }
+    else if(option == 3){
+        fprintf(stdout, "What value do you want to change MT to: ");
+        fscanf(stdin, "%d", &val);
+        person.mt = (uint16_t)val;
+    }
+    else if(option == 4){
+        fprintf(stdout, "What value do you want to change DF to: ");
+        fscanf(stdin, "%d", &val);
+        person.df = (uint16_t)val;
+    }
+    else if(option == 5){
+        fprintf(stdout, "What value do you want to change MV to: ");
+        fscanf(stdin, "%d", &val);
+        person.mv = (uint16_t)val;
+    }
+    else if(option == 6){
+        fprintf(stdout, "What value do you want to change EX to: ");
+        fscanf(stdin, "%d", &val);
+        person.ex = (uint16_t)val;
+    }
+    else if(option == 7){
+        fprintf(stdout, "What value do you want to change DX to: ");
+        fscanf(stdin, "%d", &val);
+        person.dx = (uint16_t)val;
+    }
+    else fprintf(stdout, "You choose not to modify any abilities.\n");
+    lseek(fd, addr_start + start[modify_option], SEEK_SET);
+    // print_person(&person);
+    // write(fd, &person, 80);
+    // lseek(fd, addr_start + start[modify_option], SEEK_SET);
+    // printf("\n=========================\n");
+    // print_person(&person);
+    // fsync(fd);
+    // }
+    system("clear");
     int32_t numItems = sizeof(itemList) / sizeof(ItemCodeMap);
     for(int32_t i = 0;i < numItems;i++){
         printf("%d) %s\n", i + 1, itemList[i].name);
     }
-    // printf("%d) Cancel\n", numItems + 1);
+    printf("%d) Cancel\n", numItems + 1);
     int32_t num = 1;
     fprintf(stdout, "Please select the items number you want to equipment: ");
     fscanf(stdin, "%d", &num);
     num--;
     if(num == numItems){
-        fprintf(stdout, "The modifications are complete. Wishing you smooth gaming ahead.\n");
-        return 0;
+        fprintf(stdout, "You choose not to equip any items.\n");
     }
     else if(num > numItems){
         fprintf(stdout, "The modifications are complete. Wishing you smooth gaming ahead.\n");
         return 0;
     }
     // print_person(&person);
-    for(int32_t i = 0;i < cnt;i++){
-        memcpy(&person, (pData + start[i]), sizeof(sPerson));
-        int8_t judge = 1;
-        for(int32_t j = 0;j < 16;j+=2){
-            if((int32_t)person.item[j] == 128){
-                person.item[j] = 64;
-                person.item[j + 1] = itemList[num].code;
-                judge = 0;
-                break;
-            }
-        }
-        print_person(&person);
-        if(judge){
-            fprintf(stdout, "Your inventory is full, unable to add more equipment.\n");
+    // for(int32_t i = 0;i < cnt;i++){
+    // memcpy(&person, (pData + start[modify_option]), sizeof(sPerson));
+    int8_t judge = 1;
+    for(int32_t j = 0;j < 16;j+=2){
+        if((int32_t)person.item[j] == 128){
+            person.item[j] = 0;
+            person.item[j + 1] = itemList[num].code;
+            judge = 0;
             break;
         }
-        lseek(fd, addr_start + start[i], SEEK_SET);
-        write(fd, &person, 80);
-        lseek(fd, addr_start + start[i], SEEK_SET);
-        // printf("\n=========================\n");
-        // print_person(&person);
-        fsync(fd);
     }
+    // print_person(&person);
+    if(judge){
+        fprintf(stdout, "Your inventory is full, unable to add more equipment.\n");
+    }
+    lseek(fd, addr_start + start[modify_option], SEEK_SET);
+    write(fd, &person, 80);
+    // lseek(fd, addr_start + start[i], SEEK_SET);
+    // printf("\n=========================\n");
+    system("clear");
+    fprintf(stdout, "After the modification, your character's attributes are as follows:\n");
+    print_person(&person);
+    fsync(fd);
+    // }
     // printf("\ncnt : %d\n", cnt);
     free(pData);
     close(fd);
