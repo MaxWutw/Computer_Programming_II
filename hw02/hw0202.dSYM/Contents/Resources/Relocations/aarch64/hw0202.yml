@@ -1,0 +1,10 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     hw0202
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _str2num, symObjAddr: 0x0, symBinAddr: 0x100002DDC, symSize: 0x70 }
+  - { offsetInCU: 0x42, offset: 0x42, size: 0x8, addend: 0x0, symName: _str2num, symObjAddr: 0x0, symBinAddr: 0x100002DDC, symSize: 0x70 }
+  - { offsetInCU: 0x94, offset: 0x94, size: 0x8, addend: 0x0, symName: _digit, symObjAddr: 0x70, symBinAddr: 0x100002E4C, symSize: 0x50 }
+  - { offsetInCU: 0xCA, offset: 0xCA, size: 0x8, addend: 0x0, symName: _bubbleSortByPts, symObjAddr: 0xC0, symBinAddr: 0x100002E9C, symSize: 0x3DC }
+  - { offsetInCU: 0x18F, offset: 0x18F, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x49C, symBinAddr: 0x100003278, symSize: 0xB88 }
+...
