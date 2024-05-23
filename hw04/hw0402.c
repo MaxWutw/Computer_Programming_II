@@ -143,4 +143,6 @@ int main(int argc, char *argv[]){
 
     return 0;
 }
-//  ~/Documents/Computer_Programming_II/hw04     master  3  1  INSERT  jq 'to_entries | map(select(.value == 500101005)) | from_entries'
+
+// cat data.json | jq '.[] | select(.sno == "500101001") | "UID: \(.sno)\n Station_Name: \(.snaen)"'
+// cat data.json | jq '.[] | select(.sno == "500101001") | {UID: .sno, Station_Name: .snaen, Avaliable_Bikes: .available_rent_bikes, Avaliable_Parking_Slots: .available_return_bikes, Last_Update_Time: .updateTime}'
