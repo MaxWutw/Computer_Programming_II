@@ -190,6 +190,7 @@ int main(int argc, char *argv[]){
                     idx = 8;
                     shift = bit - remain;
                 }
+<<<<<<< HEAD
                 // if(remain != 0){
                 //     remain += (cur - bit);
                 //     cur += remain;
@@ -198,6 +199,17 @@ int main(int argc, char *argv[]){
                 //     cur = bit;
                 //     j++;
                 // }
+=======
+                if(remain != 0){
+                    remain += (cur - bit);
+                    shift = cur;
+                    cur = bit;
+                }
+                else if(cur == 0){
+                    cur = bit;
+                    j++;
+                }
+>>>>>>> beb00fb (hw)
                 int8_t mask = (1 << shift) - 1;
                 int8_t get_last = *(pixel + (i * header.width * 3) + j) & mask;
                 get_last <<= (8 - idx);
