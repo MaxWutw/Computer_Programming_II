@@ -143,3 +143,4 @@ int main(int argc, char *argv[]){
 
     return 0;
 }
+//  ~/Documents/Computer_Programming_II/hw04     master  3  1  INSERT  jq 'to_entries | map(select(.value == 500101005)) | from_entries'
