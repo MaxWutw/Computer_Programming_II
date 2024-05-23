@@ -95,7 +95,7 @@ int main(int argc, char *argv[]){
             // printf("%*s\n", buffer);
             snprintf(path, sizeof(path), "/proc/%s/stat", entry->d_name);
             pFile = fopen(path, "r");
-            fscanf(pFile, "%d %[^)]) %c %*d %*d %*d %*d %*d %*d %*d %*d %*d %*d %d %d %d %d %*d %*d %*d %*d %d %ld %*d %*d %*s", &pid, name, &state, &utime, &stime, &cutime, &cstime, &starttime, &mem);
+            fscanf(pFile, "%d %[^)]) %c %*d %*d %*d %*d %*d %*d %*d %*d %*d %*d %d %d %d %d %*d %*d %*d %*d %d %lld %*d %*d %*s", &pid, name, &state, &utime, &stime, &cutime, &cstime, &starttime, &mem);
             int32_t Hertz = sysconf(_SC_CLK_TCK);
             double total_time = utime + stime + cutime + cstime;
             double seconds = uptime - ((double)starttime / (double)Hertz);
@@ -103,12 +103,12 @@ int main(int argc, char *argv[]){
             double cpu_usage = 100 * ((total_time / (double)Hertz) /  seconds);
             if(_pid){
                 if(str2int(entry->d_name) == expid){
-                    printf("%d          %30s)              %c          %lf          %ld\n", pid, name, state, cpu_usage, mem);
+                    printf("%d          %30s)              %c          %lf          %lld\n", pid, name, state, cpu_usage, mem);
                     break;
                 }
             }
             else{
-                printf("%d          %30s)              %c          %lf          %ld\n", pid, name, state, cpu_usage, mem);
+                printf("%d          %30s)              %c          %lf          %lld\n", pid, name, state, cpu_usage, mem);
             }
         }
         if(_tim){
