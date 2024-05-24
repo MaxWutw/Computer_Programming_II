@@ -39,34 +39,46 @@ int32_t str2int(const char *str) {
     return (int32_t)val;
 }
 int main(int argc, char *argv[]){
-    printf("Welcome to Taipei Youbike Station Status Checker!\n");
-    printf("Search by station (N)ame , (U)id , (L)atitude and longitude: ");
-    char inp;
-    scanf("%c", &inp);
-    int8_t _help = 0, _name = 0, _uid = 0, _lalo = 0, _sna = 0;
+    int8_t _help = 0, _name = 0, _uid = 0, _lalo = 0, _sna = 0, _asked = 0;
     int32_t c;
-    if(inp == 'N' || inp == 'n') _name = 1;
-    else if(inp == 'U' || inp == 'u') _uid = 1;
-    else if(inp == 'L' || inp == 'l') _lalo = 1;
+    char name[100];
+    char inp[100];
     while((c = getopt_long(argc, argv, "hN:U:s:t:n:", long_options, NULL)) != -1){
         if(c == 'h'){
             _help = 1;
+            _asked = 1;
         }
         else if(c == 'N'){
             _name = 1;
+            _asked = 1;
+            // name = optarg;
+            snprintf(name, sizeof(name), optarg);
         }
         else if(c == 'U'){
             _uid = 1;
+            _asked = 1;
         }
         else if(c == 's'){
             _sna = 1;
+            _asked = 1;
         }
         else if(c == 't'){
             _lalo = 1;
+            _asked = 1;
         }
         else if(c == 'n'){
             _lalo = 1;
+            _asked = 1;
         }
+    }
+    printf("Welcome to Taipei Youbike Station Status Checker!\n");
+    if(!_asked){
+        printf("Search by station (N)ame , (U)id , (L)atitude and longitude: ");
+        char inp;
+        scanf("%c", &inp);
+        if(inp == 'N' || inp == 'n') _name = 1;
+        else if(inp == 'U' || inp == 'u') _uid = 1;
+        else if(inp == 'L' || inp == 'l') _lalo = 1;
     }
 
     CURL *curl;
@@ -88,7 +100,6 @@ int main(int argc, char *argv[]){
         }
         fclose(pFile);
     }
-    FILE *pFile = fopen( "data.json", "r" );
     char sno[50], sna[50], sarea[50], mday[50], ar[50], sareaen[50], snaen[50], aren[50], act[50], srcUpdateTime[50], updateTime[50], \
     infoTime[50], infoDate[50];
     int32_t total, available_rent_bikes, available_return_bikes;
@@ -99,50 +110,43 @@ int main(int argc, char *argv[]){
     }
     else if(_name){
         printf("Please enter the station name: ");
-        char name[100];
-        scanf("%s", name);
+        
+        while (getchar() != '\n');
+        scanf("%[^\n]", name);
         printf("(show at most 5 stations with the substring \"%s\")\n", name);
-        int32_t cnt = 0;
-        char tmp[10];
-        fread(tmp, 1, 1, pFile);
-        while(pFile){
-            char buffer[4096];
-            fread(tmp, 1, 1, pFile);
-            fread(buffer, 1, 20, pFile);
-            printf("%s\n", buffer);
-            break;
-            sscanf(buffer, "%*[^:]:%[^,],%*[^:]:%[^,],%*[^:]:%[^,],%*[^:]:%[^,],%*[^:]:%[^,],%*[^:]:%[^,],\
-            %*[^:]:%[^,],%*[^:]:%[^,],%*[^:]:%[^,],%*[^:]:%[^,],%*[^:]:%[^,],%*[^:]:%[^,],%*[^:]:%[^,],\
-            %*[^:]:%d,%*[^:]:%d,%*[^:]:%lf,%*[^:]:%lf,%*[^:]:%d",\
-            sno, sna, sarea, mday, ar, sareaen, snaen, aren, act, srcUpdateTime, updateTime, infoTime, infoDate, &total,\
-            &available_rent_bikes, &latitude, &longitude, &available_return_bikes);
-            // printf("%s  %s\n", snaen, name);
-            // printf("%s\n", sno);
-            if(strstr(snaen, name) != NULL){
-                printf("UID: %s\n", sno);
-                printf("Station Name: %s\n", snaen);
-                printf("Avaliable Bikes: %d\n", available_rent_bikes);
-                printf("Avaliable Parking Slots: %d\n", available_return_bikes);
-                printf("Last Update Time: %s\n\n", updateTime);
-                cnt++;
-            }
-            fread(tmp, 1, 2, pFile);
-        }
+        char amount[200];
+        snprintf(amount, 200, "echo \"$(cat data.json | jq '[.[] | select(.snaen | contains(\"%s\"))] | length') station(s) found with the substring \"%s\" in snaen and aren:\\n\"", name, name);
+        // snprintf(amount, sizeof(amount), "cat data.json | jq -e '.[] | select((.snaen | contains(\"%s\")) or (.aren | tostring | contains(\"%s\"))) | length' && echo Found || echo \"No such station found\"", name, name);
+        // snprintf(amount, 200, "echo \"$(cat data.json | jq '[.[] | select(.snaen | contains(\"%s\"))] | length') station(s) found with the substring \"%s\" in snaen and aren:\\n\"", name, name);
+
+        system(amount);
+        char cmd[1000];
+        snprintf(cmd, sizeof(cmd), "cat data.json | jq -r '.[] | select((.snaen | contains(\"%s\")) or (.aren | tostring | contains(\"%s\"))) | \"UID: \\(.sno)\\nSNA: \\(.sna)\\nArea: \\(.sarea)\\nAddress: \\(.ar)\\nStation_Name: \\(.snaen)\\nAvaliable_Bikes: \\(.available_rent_bikes)\\nAvaliable_Parking_Slots: \\(.available_return_bikes)\\nLast_Update_Time: \\(.updateTime)\\n\"'", name, name);
+        system(cmd);
     }
     else if(_uid){
-
+        printf("Please enter the UID: ");
+        
+        while (getchar() != '\n');
+        scanf("%[^\n]", inp);
+        printf("(show at most 5 stations with the UID \"%s\")\n", inp);
+        char amount[500];
+        snprintf(amount, sizeof(amount), "echo \"$(cat data.json | jq '[.[] | select(.sno == \"%s\")] | length') station(s) found with the UID \"%s\":\\n\"", inp, inp);
+        system(amount);
+        char cmd[1000];
+        snprintf(cmd, sizeof(cmd), "cat data.json | jq -r '.[] | select(.sno == \"%s\") | \"UID: \\(.sno)\\nStation_Name: \\(.snaen)\\nAvaliable_Bikes: \\(.available_rent_bikes)\\nAvaliable_Parking_Slots: \\(.available_return_bikes)\\nLast_Update_Time: \\(.updateTime)\\n\"'", inp);
+        system(cmd);
     }
     else if(_lalo){
 
     }
-    else if(_sna){
-
-    }
     curl_easy_cleanup(curl);
-    fclose(pFile);
 
     return 0;
 }
 
 // cat data.json | jq '.[] | select(.sno == "500101001") | "UID: \(.sno)\n Station_Name: \(.snaen)"'
 // cat data.json | jq '.[] | select(.sno == "500101001") | {UID: .sno, Station_Name: .snaen, Avaliable_Bikes: .available_rent_bikes, Avaliable_Parking_Slots: .available_return_bikes, Last_Update_Time: .updateTime}'
+// cat data.json | jq -r '.[] | select(.sno == "500101001") | "UID: \(.sno)\nStation_Name: \(.snaen)\nAvaliable_Bikes: \(.available_rent_bikes)\nAvaliable_Parking_Slots: \(.available_return_bikes)\nLast_Update_Time: \(.updateTime)\n"'
+// cat data.json | jq -r '.[] | select(contains(["Gongguan Campus"])) | "UID: \(.sno)\nStation_Name: \(.snaen)\nAvaliable_Bikes: \(.available_rent_bikes)\nAvaliable_Parking_Slots: \(.available_return_bikes)\nLast_Update_Time: \(.updateTime)\n"'
+// cat data.json | jq -r '.[] | select((.snaen | contains("Gongguan Campus")) or (.aren | tostring | contains("Gongguan Campus"))) | "UID: \(.sno)\nStation_Name: \(.snaen)\nAvaliable_Bikes: \(.available_rent_bikes)\nAvaliable_Parking_Slots: \(.available_return_bikes)\nLast_Update_Time: \(.updateTime)\n"'
