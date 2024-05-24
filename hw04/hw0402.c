@@ -15,8 +15,8 @@ struct option long_options[] = {
     {"Name", 1, NULL, 'N'},
     {"UID", 1, NULL, 'U'},
     {"sna", 1, NULL, 's'},
-    {"lat", 1, NULL, 't'},
-    {"lon", 1, NULL, 'n'},
+    // {"lat", 1, NULL, 't'},
+    // {"lon", 1, NULL, 'n'},
     {0, 0, 0, 0},
 };
 void help_interface(){
@@ -26,7 +26,7 @@ void help_interface(){
     printf("    -N <station_name> \t\t Search station by name\n");
     printf("    -U <uid> \t\t Search station by UID \n");
     printf("    --sna <station_name> \t\t Search station by name in Chinese\n");
-    printf("    --lat <latitude > --lon <longitude> Search nearest stations by latitude and longitude");
+    // printf("    --lat <latitude > --lon <longitude> Search nearest stations by latitude and longitude\n");
 }
 
 int32_t str2int(const char *str) {
@@ -43,7 +43,8 @@ int main(int argc, char *argv[]){
     int32_t c;
     char name[100];
     char inp[100];
-    while((c = getopt_long(argc, argv, "hN:U:s:t:n:", long_options, NULL)) != -1){
+    char chinese[100];
+    while((c = getopt_long(argc, argv, "hN:U:s:c:", long_options, NULL)) != -1){
         if(c == 'h'){
             _help = 1;
             _asked = 1;
@@ -57,28 +58,31 @@ int main(int argc, char *argv[]){
         else if(c == 'U'){
             _uid = 1;
             _asked = 1;
+            snprintf(inp, sizeof(inp), optarg);
         }
         else if(c == 's'){
             _sna = 1;
             _asked = 1;
+            snprintf(chinese, sizeof(chinese), optarg);
         }
-        else if(c == 't'){
-            _lalo = 1;
-            _asked = 1;
-        }
-        else if(c == 'n'){
-            _lalo = 1;
-            _asked = 1;
-        }
+        // else if(c == 't'){
+        //     _lalo = 1;
+        //     _asked = 1;
+        // }
+        // else if(c == 'n'){
+        //     _lalo = 1;
+        //     _asked = 1;
+        // }
     }
     printf("Welcome to Taipei Youbike Station Status Checker!\n");
     if(!_asked){
-        printf("Search by station (N)ame , (U)id , (L)atitude and longitude: ");
-        char inp;
-        scanf("%c", &inp);
-        if(inp == 'N' || inp == 'n') _name = 1;
-        else if(inp == 'U' || inp == 'u') _uid = 1;
-        else if(inp == 'L' || inp == 'l') _lalo = 1;
+        printf("Search by station (N)ame , (U)id , (S)na: ");
+        char inside;
+        scanf("%c", &inside);
+        if(inside == 'N' || inside == 'n') _name = 1;
+        else if(inside == 'U' || inside == 'u') _uid = 1;
+        // else if(inside == 'L' || inside == 'l') _lalo = 1;
+        else if(inside == 'S' || inside =='s') _sna = 1;
     }
 
     CURL *curl;
@@ -109,36 +113,83 @@ int main(int argc, char *argv[]){
         help_interface();
     }
     else if(_name){
-        printf("Please enter the station name: ");
-        
-        while (getchar() != '\n');
-        scanf("%[^\n]", name);
-        printf("(show at most 5 stations with the substring \"%s\")\n", name);
-        char amount[200];
-        snprintf(amount, 200, "echo \"$(cat data.json | jq '[.[] | select(.snaen | contains(\"%s\"))] | length') station(s) found with the substring \"%s\" in snaen and aren:\\n\"", name, name);
+        if(!_asked){
+            printf("Please enter the station name: ");
+            
+            while (getchar() != '\n');
+            scanf("%[^\n]", name);
+        }
+        printf("(show at most 5 stations with the substring \"%s\")\n\n", name);
+        char amount[1000];
+        // snprintf(amount, 200, "echo \"$(cat data.json | jq '[.[] | select(.snaen | contains(\"%s\"))] | length') station(s) found with the substring \"%s\" in snaen and aren:\\n\"", name, name);
+        snprintf(amount, sizeof(amount),
+        "count=$(cat data.json | jq '[.[] | select((.snaen | contains(\"%s\")) or (.aren | tostring | contains(\"%s\")))] | length'); "
+        "if [ \"$count\" -eq 0 ]; then "
+        "echo \"No such station found\"; "
+        "else "
+        "echo \"$count station(s) found with the substring \\\"%s\\\" in snaen and aren:\"; "
+        "cat data.json | jq -r '.[] | select((.snaen | contains(\"%s\")) or (.aren | tostring | contains(\"%s\"))) | \"UID: \\(.sno)\\nSNA: \\(.sna)\\nArea: \\(.sarea)\\nAddress: \\(.ar)\\nStation_Name: \\(.snaen)\\nAvaliable_Bikes: \\(.available_rent_bikes)\\nAvaliable_Parking_Slots: \\(.available_return_bikes)\\nLast_Update_Time: \\(.updateTime)\\n\"'; "
+        "fi",
+        name, name, name, name, name);
+        // snprintf(amount, sizeof(amount), "cat data.json | jq -e '.[] | select((.snaen | contains(\"%s\")) or (.aren | tostring | contains(\"%s\"))) | length' && echo Found || echo \"No such station found\"", name, name);
+        // snprintf(amount, 200, "echo \"$(cat data.json | jq '[.[] | select(.snaen | contains(\"%s\"))] | length') station(s) found with the substring \"%s\" in snaen and aren:\\n\"", name, name);
+
+        system(amount);
+        // char cmd[1000];
+        // snprintf(cmd, sizeof(cmd), "cat data.json | jq -r '.[] | select((.snaen | contains(\"%s\")) or (.aren | tostring | contains(\"%s\"))) | \"UID: \\(.sno)\\nSNA: \\(.sna)\\nArea: \\(.sarea)\\nAddress: \\(.ar)\\nStation_Name: \\(.snaen)\\nAvaliable_Bikes: \\(.available_rent_bikes)\\nAvaliable_Parking_Slots: \\(.available_return_bikes)\\nLast_Update_Time: \\(.updateTime)\\n\"'", name, name);
+        // system(cmd);
+    }
+    else if(_uid){
+        if(!_asked){
+            printf("Please enter the UID: ");
+            
+            while (getchar() != '\n');
+            scanf("%[^\n]", inp);
+        }
+        printf("(show at most 5 stations with the UID \"%s\")\n\n", inp);
+        char amount[500];
+        // snprintf(amount, sizeof(amount), "echo \"$(cat data.json | jq '[.[] | select(.sno == \"%s\")] | length') station(s) found with the UID \"%s\":\\n\"", inp, inp);
+        snprintf(amount, sizeof(amount),
+        "count=$(cat data.json | jq '[.[] | select(.sno == \"%s\")]  | length'); "
+        "if [ \"$count\" -eq 0 ]; then "
+        "echo \"No such station found\"; "
+        "else "
+        "echo \"$count station(s) found with the UID \\\"%s\\\":\"; "
+        "cat data.json | jq -r '.[] | select(.sno == \"%s\") | \"UID: \\(.sno)\\nSNA: \\(.sna)\\nArea: \\(.sarea)\\nAddress: \\(.ar)\\nStation_Name: \\(.snaen)\\nAvaliable_Bikes: \\(.available_rent_bikes)\\nAvaliable_Parking_Slots: \\(.available_return_bikes)\\nLast_Update_Time: \\(.updateTime)\\n\"'; "
+        "fi",
+        inp, inp, inp, inp, inp);
+        system(amount);
+        // char cmd[1000];
+        // snprintf(cmd, sizeof(cmd), "cat data.json | jq -r '.[] | select(.sno == \"%s\") | \"UID: \\(.sno)\\nStation_Name: \\(.snaen)\\nAvaliable_Bikes: \\(.available_rent_bikes)\\nAvaliable_Parking_Slots: \\(.available_return_bikes)\\nLast_Update_Time: \\(.updateTime)\\n\"'", inp);
+        // system(cmd);
+    }
+    else if(_sna){
+        if(!_asked){
+            printf("Please enter the station name in chinese: ");
+            
+            while (getchar() != '\n');
+            scanf("%[^\n]", chinese);
+        }
+        printf("(show at most 5 stations with the substring \"%s\")\n\n", chinese);
+        char amount[1000];
+        // snprintf(amount, 200, "echo \"$(cat data.json | jq '[.[] | select((.ar | contains(\"%s\")) or (.sna | tostring | contains(\"%s\")))] | length') station(s) found with the substring \"%s\" in ar and sna:\\n\"", chinese, chinese, chinese);
+        snprintf(amount, sizeof(amount),
+        "count=$(cat data.json | jq '[.[] | select((.ar | contains(\"%s\")) or (.sna | tostring | contains(\"%s\")) or (.sarea | tostring | contains(\"%s\")))] | length'); "
+        "if [ \"$count\" -eq 0 ]; then "
+        "echo \"No such station found\"; "
+        "else "
+        "echo \"$count station(s) found with the substring \\\"%s\\\" in ar and sna and sarea:\"; "
+        "cat data.json | jq -r '.[] | select((.ar | contains(\"%s\")) or (.sna | tostring | contains(\"%s\")) or (.sarea | tostring | contains(\"%s\"))) | \"UID: \\(.sno)\\nSNA: \\(.sna)\\nArea: \\(.sarea)\\nAddress: \\(.ar)\\nStation_Name: \\(.snaen)\\nAvaliable_Bikes: \\(.available_rent_bikes)\\nAvaliable_Parking_Slots: \\(.available_return_bikes)\\nLast_Update_Time: \\(.updateTime)\\n\"'; "
+        "fi",
+        chinese, chinese, chinese, chinese, chinese, chinese, chinese);
+        // printf("%s\n", amount);
         // snprintf(amount, sizeof(amount), "cat data.json | jq -e '.[] | select((.snaen | contains(\"%s\")) or (.aren | tostring | contains(\"%s\"))) | length' && echo Found || echo \"No such station found\"", name, name);
         // snprintf(amount, 200, "echo \"$(cat data.json | jq '[.[] | select(.snaen | contains(\"%s\"))] | length') station(s) found with the substring \"%s\" in snaen and aren:\\n\"", name, name);
 
         system(amount);
         char cmd[1000];
-        snprintf(cmd, sizeof(cmd), "cat data.json | jq -r '.[] | select((.snaen | contains(\"%s\")) or (.aren | tostring | contains(\"%s\"))) | \"UID: \\(.sno)\\nSNA: \\(.sna)\\nArea: \\(.sarea)\\nAddress: \\(.ar)\\nStation_Name: \\(.snaen)\\nAvaliable_Bikes: \\(.available_rent_bikes)\\nAvaliable_Parking_Slots: \\(.available_return_bikes)\\nLast_Update_Time: \\(.updateTime)\\n\"'", name, name);
-        system(cmd);
-    }
-    else if(_uid){
-        printf("Please enter the UID: ");
-        
-        while (getchar() != '\n');
-        scanf("%[^\n]", inp);
-        printf("(show at most 5 stations with the UID \"%s\")\n", inp);
-        char amount[500];
-        snprintf(amount, sizeof(amount), "echo \"$(cat data.json | jq '[.[] | select(.sno == \"%s\")] | length') station(s) found with the UID \"%s\":\\n\"", inp, inp);
-        system(amount);
-        char cmd[1000];
-        snprintf(cmd, sizeof(cmd), "cat data.json | jq -r '.[] | select(.sno == \"%s\") | \"UID: \\(.sno)\\nStation_Name: \\(.snaen)\\nAvaliable_Bikes: \\(.available_rent_bikes)\\nAvaliable_Parking_Slots: \\(.available_return_bikes)\\nLast_Update_Time: \\(.updateTime)\\n\"'", inp);
-        system(cmd);
-    }
-    else if(_lalo){
-
+        // snprintf(cmd, sizeof(cmd), "cat data.json | jq -r '.[] | select((.ar | contains(\"%s\")) or (.sna | tostring | contains(\"%s\"))) | \"UID: \\(.sno)\\nSNA: \\(.sna)\\nArea: \\(.sarea)\\nAddress: \\(.ar)\\nStation_Name: \\(.snaen)\\nAvaliable_Bikes: \\(.available_rent_bikes)\\nAvaliable_Parking_Slots: \\(.available_return_bikes)\\nLast_Update_Time: \\(.updateTime)\\n\"'", chinese, chinese);
+        // system(cmd);
     }
     curl_easy_cleanup(curl);
 

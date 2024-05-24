@@ -80,7 +80,7 @@ int main(int argc, char *argv[]){
         printf("PID          %30s          state          CPU              MEM\n", "NAME");
         procdir = opendir("/proc");
         if(!procdir){
-            fprintf(stdout, "Error: opendir failed");
+            fprintf(stdout, "Error: opendir failed\n");
             return 0;
         }
         FILE *pUptime = fopen("/proc/uptime", "r");
