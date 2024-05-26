@@ -90,12 +90,16 @@ int main(int argc, char *argv[]){
             // printf("%s\n", entry->d_name);
             double uptime = 0;
             char buffer[100];
-            fread(buffer, 20, 1, pUptime);
+            fread(buffer, sizeof(buffer), 1, pUptime);
             sscanf(buffer, "%lf %*s", &uptime);
             // printf("%*s\n", buffer);
             snprintf(path, sizeof(path), "/proc/%s/stat", entry->d_name);
-            pFile = fopen(path, "r");
-            fscanf(pFile, "%d %[^)]) %c %*d %*d %*d %*d %*d %*d %*d %*d %*d %*d %d %d %d %d %*d %*d %*d %*d %d %lld %*d %*d %*s", &pid, name, &state, &utime, &stime, &cutime, &cstime, &starttime, &mem);
+            // pFile = fopen(path, "r");
+            if((pFile = fopen(path, "r")) == NULL){
+                fprintf(stdout, "Error: Unable to open file for reading or writing\n");
+                return 0;
+            }
+            fscanf(pFile, "%d (%[^)]) %c %*d %*d %*d %*d %*d %*d %*d %*d %*d %*d %d %d %d %d %*d %*d %*d %*d %d %lld %*d %*d %*s", &pid, name, &state, &utime, &stime, &cutime, &cstime, &starttime, &mem);
             int32_t Hertz = sysconf(_SC_CLK_TCK);
             double total_time = utime + stime + cutime + cstime;
             double seconds = uptime - ((double)starttime / (double)Hertz);
@@ -103,13 +107,14 @@ int main(int argc, char *argv[]){
             double cpu_usage = 100 * ((total_time / (double)Hertz) /  seconds);
             if(_pid){
                 if(str2int(entry->d_name) == expid){
-                    printf("%d          %30s)              %c          %lf          %lld\n", pid, name, state, cpu_usage, mem);
+                    printf("%d          %30s              %c          %.2lf%%          %lld\n", pid, name, state, cpu_usage, mem);
                     break;
                 }
             }
             else{
-                printf("%d          %30s)              %c          %lf          %lld\n", pid, name, state, cpu_usage, mem);
+                printf("%d          %30s              %c          %.2lf%%          %lld\n", pid, name, state, cpu_usage, mem);
             }
+            fclose(pFile);
         }
         if(_tim){
             sleep(timeinterval);
@@ -117,7 +122,7 @@ int main(int argc, char *argv[]){
         else sleep(5);
         closedir(procdir);
         fclose(pUptime);
-        fclose(pFile);
+        
         if(_cnt){
             if(counttime--) continue;
             else break;
